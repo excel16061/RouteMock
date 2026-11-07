@@ -1,0 +1,7 @@
+# SHA-256 manifest. Hashes detect changes relative to a manifest you already trust.
+# They do not prove that any observation is true.
+90a243c075d43b581ec1eb120fac7744b6c1932eb2e5ca6e728a1a014364eea9  derived/checks.csv
+b0c6820ba90983b0941b4f88faf06d3e55bbdff5ce8718a1ff0e6fb96e27764f  derived/report.html
+919e38244fad54809532b6fb5afdd06306bb94baa919eddd3cf5521dde068fbc  derived/run.json
+e8e7f4153742ca00edc5ce1bd78c78173a135895daf6dc6b27399e9a521b9ca0  raw/delivery-observations-observer-delivery-1.csv
+4aef9d062b69b6bc38ad5aec1656a8a12b8ebd88e27040ae0d0fac0f0361a500  raw/observer-delivery-1-geometry.json

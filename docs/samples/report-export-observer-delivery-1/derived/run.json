@@ -1,0 +1,146 @@
+{
+  "schema": "routemock-run/1",
+  "run_id": "4541ad7c-3c1e-4dc6-b55d-a935156d9e1d",
+  "state": "final",
+  "corrects": null,
+  "title": "Delivery to a separate app, one synthetic route",
+  "protocol_version": "observer-delivery",
+  "versions": {
+    "app": "0.4.7",
+    "backend": "0.1.1"
+  },
+  "source_revision": "dc41712",
+  "working_tree_dirty": true,
+  "route_fixture": "Map-selected synthetic Berlin points; live Valhalla route, 1277.78 m",
+  "selected_speed_kmh": 30.0,
+  "configuration": {
+    "protocol": "observer-delivery-1",
+    "repeat": false,
+    "routemock_apk_sha256": "e889a053efac0efd41afdd61d7cea99a641770a1b33d486a52f861f2b31adcef",
+    "observer_version": "0.1.0",
+    "observer_application_id": "com.routemock.observer",
+    "observer_apk_sha256": "8417d01db18936af655a4bd0c1aae80695f50b192dc4cfa8d631edac63b9f4d3",
+    "device_label": "Test phone A",
+    "route_start": [
+      52.480622,
+      13.31891
+    ],
+    "route_end": [
+      52.486211,
+      13.329576
+    ],
+    "provider": "Valhalla (FOSSGIS public server)",
+    "route_calculated_at_utc": "2026-11-07T02:52:11Z"
+  },
+  "device": {
+    "model": "REVVL 6 Pro",
+    "android_version": "13"
+  },
+  "started_at_utc": "2026-11-07T02:54:38+00:00",
+  "finished_at_utc": "2026-11-07T02:59:38+00:00",
+  "monotonic_duration_s": 295.89,
+  "limitations": "One test app, one phone, one route, one run, through LocationManager and the GPS provider. Says nothing about apps using Google Play services, or apps that reject mock locations.",
+  "deviations": "The observer source was uncommitted at the time of the run; it is committed with this evidence. The observer started 4.39 s after RouteMock, so it missed the first 42.4 m, as the protocol expected. The mark came 3.40 s after the Stop tap.",
+  "counts": {
+    "PASS": 8,
+    "FAIL": 0,
+    "NOT TESTED": 0,
+    "INCONCLUSIVE": 0
+  },
+  "checks": [
+    {
+      "check_id": "O1",
+      "title": "Delivery to another app",
+      "expected": "At least 30 callbacks during the route",
+      "tolerance": "30",
+      "observed": "145 moving callbacks, 198 in all, matching Android's record one for one",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "O2",
+      "title": "Mock flag",
+      "expected": "Every recorded row flagged",
+      "tolerance": "All",
+      "observed": "199 of 199 rows flagged. Non-mock fixes appear only as counts",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "O3",
+      "title": "Road geometry",
+      "expected": "On the selected geometry",
+      "tolerance": "1 m",
+      "observed": "Worst 0.055 m, mean 0.016 m over 198 callbacks",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "O4",
+      "title": "Speed",
+      "expected": "8.333 m/s measured and reported",
+      "tolerance": "2%",
+      "observed": "8.3333 m/s over 147.99 s, +0.000%; reported 8.333",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "O5",
+      "title": "Endpoint hold",
+      "expected": "At least 10 callbacks at the final point at speed zero",
+      "tolerance": "1 m",
+      "observed": "53 callbacks over 53.47 s, 0.000 m from the final point, speed 0.000",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "O6",
+      "title": "Freshness",
+      "expected": "Median callback age at most 2000 ms",
+      "tolerance": "2000 ms",
+      "observed": "Median 4 ms during the route, maximum 87 ms",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "O7",
+      "title": "Stop",
+      "expected": "No mock callback more than 2 s after the mark, across 60 s",
+      "tolerance": "60 s",
+      "observed": "Last mock callback 0.61 s before the Stop tap; 0 after the mark, across 88.69 s",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "O8",
+      "title": "Cached data",
+      "expected": "Reported separately, never counted",
+      "tolerance": "Separate",
+      "observed": "1 mock last_known row during the hold, 0.89 s old; 1 non-mock read after Stop, not read; neither counted",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    }
+  ],
+  "evidence": [
+    {
+      "name": "delivery-observations-observer-delivery-1.csv",
+      "kind": "raw",
+      "sha256": "e8e7f4153742ca00edc5ce1bd78c78173a135895daf6dc6b27399e9a521b9ca0",
+      "size": 13757
+    },
+    {
+      "name": "observer-delivery-1-geometry.json",
+      "kind": "raw",
+      "sha256": "4aef9d062b69b6bc38ad5aec1656a8a12b8ebd88e27040ae0d0fac0f0361a500",
+      "size": 2111
+    }
+  ]
+}

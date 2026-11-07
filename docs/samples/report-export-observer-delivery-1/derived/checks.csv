@@ -1,0 +1,9 @@
+check_id,title,expected,tolerance,observed,result,source,basis
+O1,Delivery to another app,At least 30 callbacks during the route,30,"145 moving callbacks, 198 in all, matching Android's record one for one",PASS,automated check,independent Android observation
+O2,Mock flag,Every recorded row flagged,All,199 of 199 rows flagged. Non-mock fixes appear only as counts,PASS,automated check,independent Android observation
+O3,Road geometry,On the selected geometry,1 m,"Worst 0.055 m, mean 0.016 m over 198 callbacks",PASS,automated check,independent Android observation
+O4,Speed,8.333 m/s measured and reported,2%,"8.3333 m/s over 147.99 s, +0.000%; reported 8.333",PASS,automated check,independent Android observation
+O5,Endpoint hold,At least 10 callbacks at the final point at speed zero,1 m,"53 callbacks over 53.47 s, 0.000 m from the final point, speed 0.000",PASS,automated check,independent Android observation
+O6,Freshness,Median callback age at most 2000 ms,2000 ms,"Median 4 ms during the route, maximum 87 ms",PASS,automated check,independent Android observation
+O7,Stop,"No mock callback more than 2 s after the mark, across 60 s",60 s,"Last mock callback 0.61 s before the Stop tap; 0 after the mark, across 88.69 s",PASS,automated check,independent Android observation
+O8,Cached data,"Reported separately, never counted",Separate,"1 mock last_known row during the hold, 0.89 s old; 1 non-mock read after Stop, not read; neither counted",PASS,automated check,other

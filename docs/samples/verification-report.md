@@ -7,8 +7,8 @@ builds are marked historical.
 **Hardware:** one physical phone, a REVVL 6 Pro on Android 13. Dashboard tests with "two devices"
 used two **backend device records** in a test database, never two phones.
 
-**Scope:** two distinct road routes were played: 31.21 km, partly, and 1.32 km, to arrival. Each came
-from one live response. One routing provider (the FOSSGIS Valhalla server) and one map tile provider
+**Scope:** three distinct road routes were played: 31.21 km, partly, and 1.32 km and 1.28 km, to
+arrival. Each came from one live response. One routing provider (the FOSSGIS Valhalla server) and one map tile provider
 (OpenFreeMap) were used. Stationary sessions used a synthetic point. The source was uncommitted, so
 no revision identifier exists.
 
@@ -16,14 +16,14 @@ no revision identifier exists.
 
 | Kind | What it shows | PASS | FAIL | NOT TESTED | Other |
 | --- | --- | --- | --- | --- | --- |
-| [Physical-device checks](#physical-device-checks) | Behavior on the one real phone | 36 | 1 | 5 | |
+| [Physical-device checks](#physical-device-checks) | Behavior on the one real phone | 37 | 1 | 4 | |
 | [Automated tests](#automated-tests) | Logic on a computer, with no phone | 388 | 0 | 0 | 1 skipped |
 | [Static APK inspection](#static-apk-inspection) | What is inside the built file | 6 | 0 | 0 | |
-| [Live-provider checks](#live-provider-checks) | Responses from the real routing service | 5 | 0 | 0 | |
+| [Live-provider checks](#live-provider-checks) | Responses from the real routing service | 6 | 0 | 0 | |
 
-- **Device split:** 9 PASS on the current 0.4.7 build. The other 27 PASS and the 1 FAIL are historical,
+- **Device split:** 10 PASS on the current 0.4.7 build. The other 27 PASS and the 1 FAIL are historical,
   from 0.4.0 to 0.4.5, and were not repeated on 0.4.7.
-- **Live-provider split:** 1 PASS on 0.4.7, and 4 historical.
+- **Live-provider split:** 2 PASS on 0.4.7, and 4 historical.
 - **The 1 FAIL** is the force-stop cleanup limitation in check D17. Android gives the app no chance
   to clean up at that moment, so the app cannot fix it, but the outcome is still not a pass.
 
@@ -134,13 +134,58 @@ which supports there being no restart.
 near a pin do not reach the map. The route was saved temporarily to read its geometry and then
 deleted, leaving saved routes byte-identical.
 
+### Delivery to a separate app (protocol observer-delivery-1)
+
+Run `4541ad7c-3c1e-4dc6-b55d-a935156d9e1d` under [observer-delivery-1](../protocols/observer-delivery-1.md) on 2026-11-07. RouteMock
+0.4.7 (`e889a053...`) ran with the separately installed
+[location observer](../../tools/location-observer/README.md) 0.1.0, application ID
+`com.routemock.observer`, SHA-256
+`8417d01db18936af655a4bd0c1aae80695f50b192dc4cfa8d631edac63b9f4d3`. The installed file matched that
+hash. Precise location was granted on the phone's own dialog, while in use only. The observer's source
+was at that point uncommitted, on top of `dc41712`.
+
+The route was new: 1277.78 m, 4 turns over 30 degrees, at 30 km/h with repeat off, from one live
+Valhalla request. See the [export](delivery-observations-observer-delivery-1.csv),
+[geometry](observer-delivery-1-geometry.geojson), and
+[report](report-export-observer-delivery-1/derived/report.html).
+
+| Check | Criterion | Observed | Result |
+| --- | --- | --- | --- |
+| Delivery to another app | At least 30 callbacks during the route | 145 moving callbacks, 198 in all | PASS |
+| Mock flag | Every recorded row flagged | 199 of 199 rows | PASS |
+| Road geometry | At most 1 m | Worst 0.055 m, mean 0.016 m | PASS |
+| Speed | Within 2% of 8.333 m/s | 8.3333 m/s over 147.99 s, +0.000%; reported 8.333 | PASS |
+| Endpoint hold | At least 10 callbacks at the final point, speed zero | 53 over 53.47 s, 0.000 m away, speed 0.000 | PASS |
+| Freshness | Median age at most 2,000 ms | Median 4 ms, maximum 87 ms during the route | PASS |
+| Stop | No mock callback over 2 s after the mark, across 60 s | 0 after the mark, across 88.69 s | PASS |
+| Cached data | Separate, and never counted | See below | PASS |
+
+**Fresh callbacks and cached fixes, reported separately:**
+
+| Phase | Fresh mock callbacks | Non-mock callbacks (counted, unread) | Cached reads |
+| --- | --- | --- | --- |
+| Route | 145 | 0 | None |
+| Endpoint hold | 53 over 53.47 s, identical position | 0 | 1 mock row, 0.89 s old |
+| After Stop | **0** across 92.09 s from the Stop tap | 91 | 1 read, not mock-flagged, so not read |
+
+- **Comparison:** Android's own record held 198 fixes in the same window, and the observer received all
+  198.
+- **Stop:** the last mock callback came 0.61 s before the Stop tap. The mark was tapped 3.40 s after it.
+- **Real fixes after Stop:** the 91 non-mock callbacks show real fixes resumed. Their coordinates were
+  never read. A separate 6 arrived before any session, during permission setup, and were discarded the
+  same way.
+- **Expected gap:** the observer started 4.39 s after RouteMock, so it missed the first 42.4 m.
+
+**Scope of this pass:** one test app, through `LocationManager` and the GPS provider, on one phone. It
+says nothing about apps using Google Play services, or about apps that reject mock locations.
+
 ## Physical-device checks
 
 "Current" means run on 0.4.7. "Historical" means the result is from the build shown and was not
 repeated on 0.4.7. Since 0.4.5, the app has changed only in its backup rules and its handling of
 malformed dashboard replies.
 
-### Current build, 0.4.7 (9 PASS)
+### Current build, 0.4.7 (10 PASS)
 
 | # | Check | Build | Result | Evidence |
 | --- | --- | --- | --- | --- |
@@ -152,6 +197,7 @@ malformed dashboard replies.
 | D6 | Upgrade keeps saved data | 0.4.7 | PASS | Saved routes and consent receipt byte-identical before and after install |
 | D7 | Automated consent labeled | 0.4.7 | PASS | Events recorded `AUTOMATED_TEST`, subject to the label's limit below |
 | D38 | Invalid server responses | 0.4.7 | PASS | The listed replies, over loopback HTTP. See above |
+| D36 | Delivery to another app | 0.4.7 | PASS | Protocol observer-delivery-1: one separate test app, `LocationManager`, GPS provider. See above |
 | D41 | Reaching the end of a road route | 0.4.7 | PASS | Protocol road-arrival-1, on the 1.32 km route at 30 km/h. See above. The 31.21 km route has not been driven to its end |
 
 ### Historical (27 PASS, 1 FAIL)
@@ -187,11 +233,10 @@ malformed dashboard replies.
 | D34 | Offline required withdrawal | 0.4.5 | PASS | Session stopped at once; server updated 5.0 s after reconnecting |
 | D35 | Offline Withdraw all, delivered on relaunch | 0.4.5 | PASS | Server unchanged while the app stayed closed; revoked 4.3 s after launch |
 
-### NOT TESTED (5)
+### NOT TESTED (4)
 
 | # | Check | Why |
 | --- | --- | --- |
-| D36 | Delivery to another app | Only RouteMock may be tested on this phone |
 | D37 | Low-memory process death | `adb` could not cause it: `kill` was denied, and `am kill` leaves foreground services alone |
 | D39 | Release APK at runtime | Its signature differs from the debug build, so installing it needs an uninstall, which was ruled out |
 | D40 | Phone restart clearing abandoned test providers | No restart was performed |
@@ -206,6 +251,9 @@ These ran on a computer, with no phone. Final run on 0.4.7:
 | Android unit tests | 298 | 297 | 0 | 0 | 1 |
 | Dashboard backend tests | 91 | 91 | 0 | 0 | 0 |
 | **Together** | **389** | **388** | **0** | **0** | **1** |
+
+The location observer tool has its own 12 unit tests, all passing, counted separately from the totals
+above. They cover the tool, not delivery. No emulator was available, so there is no emulator evidence.
 
 The skipped test is `LiveValhallaCheck`, which needs a network and is counted under
 [live-provider checks](#live-provider-checks) when run on request.
@@ -242,6 +290,7 @@ Checks against the public FOSSGIS Valhalla server, subject to its availability. 
 
 | # | Check | Build | Where | Result | Evidence |
 | --- | --- | --- | --- | --- | --- |
+| L6 | Route calculated for observer-delivery-1 | **0.4.7 (current)** | Phone | PASS | One route, 1.28 km |
 | L5 | Route calculated for road-arrival-1 | **0.4.7 (current)** | Phone | PASS | One route, 1.32 km, labeled with its traffic basis |
 | L1 | `LiveValhallaCheck`: routes and a real failure | 0.4.6 (not repeated on 0.4.7) | Computer | PASS | 4 distinct routes, shortest 31.214 km; points at sea returned "no road near pin". One run, paced requests |
 | L2 | `LiveValhallaCheck` | 0.3.0 | Computer | PASS | Historical |
@@ -265,6 +314,7 @@ finalized run stays as it was in [report-export](report-export/), and its linked
 | C7 | Largest step ratio reported as 1.003 on 0.4.0 | Recalculating every recorded fix gives 1.006. Still within 1.05 |
 | C8 | Invalid server responses on a device NOT TESTED | Closed for the listed replies by the 0.4.7 run (D38) |
 | C9 | Reaching the end of a road route NOT TESTED | Closed by run road-arrival-1 (D41), on one short route at one speed |
+| C10 | Delivery to another app NOT TESTED | Closed by run observer-delivery-1 (D36), for one test app through `LocationManager` |
 
 ## How acceptance was handled
 
@@ -283,7 +333,10 @@ finalized run stays as it was in [report-export](report-export/), and its linked
   `AUTOMATED_TEST`. All earlier events and the correction stayed unchanged.
 - **The road-arrival-1 run** added 2 more, an acceptance of the three required scopes and its
   withdrawal, both `AUTOMATED_TEST`.
-- **Current state:** 35 events, all four scopes `WITHDRAWN`, no consent in force.
+- **The observer-delivery-1 run** added 4 more, in two accept-and-withdraw cycles, all
+  `AUTOMATED_TEST`. The second cycle was needed to delete the temporary route, because consent had
+  already been withdrawn and that locks the app.
+- **Current state:** 39 events, all four scopes `WITHDRAWN`, no consent in force.
 
 **Disclosure:** the 0.4.0 run used a temporary low-level touch monitor, which recorded touch
 times. One earlier 8-second diagnostic also read touch positions. This should not have been
@@ -362,6 +415,7 @@ until the operator revokes it, and queued commands expire within 5 minutes.
 
 ## Limitations
 
-One phone, two played routes, one routing provider, and one provider response per route. Arrival was
-observed once, on the short route at 30 km/h. Runs on the long route covered only its start. Repeated phases are not independent routes. Polling
-observes most but not all fixes. No claim is made about other apps.
+One phone, three played routes, one routing provider, and one provider response per route. Arrival was
+observed on the two short routes at 30 km/h. Runs on the long route covered only its start. Repeated phases are not independent routes. Polling
+observes most but not all fixes. Delivery was shown to one test app only, and no claim is made about
+any other app.

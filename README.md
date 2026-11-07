@@ -13,7 +13,7 @@ direct great-circle path and ignores roads, buildings, water, and terrain.
 This is a testing tool. It does not change your physical location, and Android marks its
 locations as mock.
 
-**Evaluation scope:** one physical Android 13 phone, two played road routes, one routing provider,
+**Evaluation scope:** one physical Android 13 phone, three played road routes, one routing provider,
 and one map tile provider. See [Verification](#verification).
 
 **Status:** version 0.4.7. Live traffic is **not configured**, and place-name search is not
@@ -63,6 +63,7 @@ automated test state, not anyone's acceptance.
 | Reproducing results | [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md) |
 | Publication audit | [docs/PUBLICATION_AUDIT.md](docs/PUBLICATION_AUDIT.md) |
 | Sample data | [docs/samples/README.md](docs/samples/README.md) |
+| Location observer test tool | [tools/location-observer/README.md](tools/location-observer/README.md) |
 | Licensing | [docs/LICENSING.md](docs/LICENSING.md) |
 | Third-party notices | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
 | Reporting vulnerabilities | [SECURITY.md](SECURITY.md) |
@@ -499,8 +500,9 @@ stuck, reopen RouteMock or restart the phone.
   mock fixes are produced, but the last known position stays a stale simulated one. Android gives
   the app no chance to clean up. Opening RouteMock fixes it. See
   [recovery notes](docs/FORCE_STOP_RECOVERY.md).
-- **Evaluation is narrow:** one phone, two played routes, and one routing provider. Arrival was
-  observed once, on a 1.32 km route, and most device results predate 0.4.7.
+- **Evaluation is narrow:** one phone, three played routes, and one routing provider. Arrival was
+  observed on two short routes, delivery was shown to one test app, and most device results predate
+  0.4.7.
 - **The Simulated and Delivered markers can overlap**, so one label may hide the other.
 - **Routing availability** depends on a volunteer-run server with no guarantee. Very
   long routes can be refused.
@@ -515,7 +517,8 @@ stuck, reopen RouteMock or restart the phone.
   pre-injection capture uses Android's last known fixes, so it can be old, and there
   may be none if location was never available.
 - **Delivery is only observed while the app is visible** and has location permission,
-  and it covers delivery to RouteMock, not to other apps.
+  and it covers delivery to RouteMock. Delivery to a separate test app was checked once, with the
+  [location observer](tools/location-observer/README.md).
 - **Offline map areas** cannot be downloaded.
 - **The debug APK is about 84 MB** because it carries MapLibre for four CPU types.
 - **Compatibility is not universal.** Android marks these locations as mock, and
@@ -545,10 +548,10 @@ Evidence is kept in four separate kinds, which are not added together. The
 
 | Kind | PASS | FAIL | NOT TESTED | Notes |
 | --- | --- | --- | --- | --- |
-| Physical-device checks | 36 | 1 | 5 | One REVVL 6 Pro on Android 13. 9 PASS on 0.4.7; the rest are from 0.4.0 to 0.4.5 |
+| Physical-device checks | 37 | 1 | 4 | One REVVL 6 Pro on Android 13. 10 PASS on 0.4.7; the rest are from 0.4.0 to 0.4.5 |
 | Automated tests | 388 | 0 | | 297 Android and 91 dashboard; 1 opt-in network test skipped |
 | Static APK inspection | 6 | 0 | | Release APK read without running it |
-| Live-provider checks | 5 | 0 | | Public Valhalla server. 1 on 0.4.7; 4 historical |
+| Live-provider checks | 6 | 0 | | Public Valhalla server. 2 on 0.4.7; 4 historical |
 
 **The one FAIL** is a known limitation: after a force-stop, test providers stay registered until
 RouteMock is reopened, and the last known position stays a stale simulated one. The simulation itself
@@ -568,11 +571,18 @@ destination at zero speed until Stop, as expected. See the
 
 ![Holding at the destination](docs/screenshots/road-arrival-held.png)
 
+**Delivery to a separate app:** a separately installed test app, listening through `LocationManager`,
+received 198 fresh mock fixes, matching Android's own record one for one, including 53 during the
+endpoint hold. It received no mock fix in the 92 seconds after Stop. This covers one test app, not apps
+using Google Play services or apps that reject mock locations. See the
+[report](docs/samples/report-export-observer-delivery-1/derived/report.html).
+
 ### Verified features
 
 Confirmed on the phone, on the build shown in the report:
 
 - Road playback, including turns, pause, resume, live speed changes, and arrival
+- Delivery to one separate test app, and no fresh mock fixes after Stop
 - Stop cleanup of providers, service, wake lock, and notification
 - Notification controls, rotation, section switching, background, and brief screen off
 - The consent gate, withdrawal online and offline, and test-event labeling
@@ -583,7 +593,7 @@ session boundary is covered by unit tests, as a phone cannot reach it directly.
 
 ### Not tested
 
-Delivery to another app, a real low-memory process death, the
+A real low-memory process death, the
 release APK on a device, a phone restart clearing leftover providers, Android 14 or later, device-to-device transfer, and any deployment of the
 dashboard.
 

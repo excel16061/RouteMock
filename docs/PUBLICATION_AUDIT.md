@@ -1,6 +1,6 @@
 # Publication audit
 
-Scope: all 222 published files, including hidden files and the final reports. These are automated text searches plus inspection of every image. A clean result
+Scope: all 242 published files, including hidden files and the final reports. These are automated text searches plus inspection of every image. A clean result
 is not proof that nothing sensitive remains, and this cannot cover caches, forks, or other copies.
 
 ## Scanners

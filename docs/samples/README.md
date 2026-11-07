@@ -19,6 +19,9 @@ Nothing here records a real journey. Do not read these files as travel.
 | `delivery-observations-road-arrival-1.csv` | Fixes from the full-route arrival run | Independently observed Android delivery |
 | `road-arrival-1-geometry.geojson` | Geometry of the arrival route | Live provider response for synthetic points. Data © OpenStreetMap contributors (ODbL) |
 | `report-export-road-arrival-1/` | The finalized arrival run | Real measurements |
+| `delivery-observations-observer-delivery-1.csv` | The location observer's export: only mock-flagged fixes, with counts of ignored fixes | Observed by a separate app |
+| `observer-delivery-1-geometry.geojson` | Geometry of the observer route | Live provider response for synthetic points. Data © OpenStreetMap contributors (ODbL) |
+| `report-export-observer-delivery-1/` | The finalized observer run | Real measurements |
 
 **Categories used across the project:**
 
@@ -32,7 +35,7 @@ Nothing here records a real journey. Do not read these files as travel.
 printed from `derived/report.html` afterwards. Check it from that folder with
 `grep -v '^#' MANIFEST.sha256 | shasum -a 256 -c`.
 
-The four newer export folders have their own `MANIFEST.sha256`, checked the same way, and no PDF.
+The five newer export folders have their own `MANIFEST.sha256`, checked the same way, and no PDF.
 
 `../EVIDENCE_MANIFEST.sha256` covers this folder, `../screenshots/`, and the main reports. It does
 not list itself. Hashes detect changes
