@@ -1,0 +1,2 @@
+{% extends "core/base.html" %}{% block body %}<section><h2>Consent receipts</h2><p class="note">Shown only where the phone's user allowed upload.</p>
+<table><tr><th>Received (UTC)</th><th>Device</th><th>Receipt</th></tr>{% for r in records %}<tr><td>{{ r.received_at }}</td><td>{{ r.device.label }}</td><td><code>{{ r.receipt }}</code></td></tr>{% empty %}<tr><td colspan="3">No receipts.</td></tr>{% endfor %}</table></section>{% endblock %}

@@ -1,0 +1,159 @@
+{
+  "schema": "routemock-run/1",
+  "run_id": "6c740f37-2673-4830-a759-f7d03d43bd99",
+  "state": "final",
+  "corrects": null,
+  "title": "Road playback on 0.4.6, one synthetic route",
+  "protocol_version": "road-playback-2",
+  "versions": {
+    "app": "0.4.6",
+    "backend": "0.1.0"
+  },
+  "source_revision": null,
+  "working_tree_dirty": true,
+  "route_fixture": "Saved synthetic Berlin to Potsdam route; earlier live Valhalla geometry, 31.21 km",
+  "selected_speed_kmh": 120.0,
+  "configuration": {
+    "other_speeds_kmh": [
+      60,
+      90
+    ],
+    "tick_seconds": 1,
+    "debug_apk_sha256": "8322e873620ac7f2234aade524c36394686e09b33a2d21705f091b79efd54ab4"
+  },
+  "device": {
+    "model": "REVVL 6 Pro",
+    "android_version": "13"
+  },
+  "started_at_utc": "2026-11-07T00:03:11+00:00",
+  "finished_at_utc": "2026-11-07T00:06:26+00:00",
+  "monotonic_duration_s": 193.21,
+  "limitations": "One physical phone, one route, one provider response. The run covered the first 4.93 km of 31.21 km and did not reach the destination. Polling sees most fixes, not necessarily all. Delivery to other apps not measured.",
+  "deviations": "Added a 90 km/h phase to protocol road-playback-2. No source revision exists, as the source is uncommitted.",
+  "counts": {
+    "PASS": 11,
+    "FAIL": 0,
+    "NOT TESTED": 0,
+    "INCONCLUSIVE": 0
+  },
+  "checks": [
+    {
+      "check_id": "1",
+      "title": "Mock flag preserved",
+      "expected": "Every fix flagged",
+      "tolerance": "All",
+      "observed": "189 of 189 flagged",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "2",
+      "title": "Fixes follow the selected road",
+      "expected": "On the geometry",
+      "tolerance": "1 m",
+      "observed": "Worst 0.059 m, mean 0.022 m over 189 fixes",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "2b",
+      "title": "Turns",
+      "expected": "Stay on the road through turns",
+      "tolerance": "1 m",
+      "observed": "5 bearing changes over 30 degrees, the largest 101.9; worst distance from road at those points 0.059 m",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "3a",
+      "title": "Speed at 120 km/h, before pause",
+      "expected": "33.333 m/s",
+      "tolerance": "2%",
+      "observed": "33.334 m/s over 62.72 s; error +0.001%",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "3b",
+      "title": "Speed at 120 km/h, after resume",
+      "expected": "33.333 m/s",
+      "tolerance": "2%",
+      "observed": "33.333 m/s over 35.87 s; error -0.001%",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "3c",
+      "title": "Speed after change to 60 km/h",
+      "expected": "16.667 m/s",
+      "tolerance": "2%",
+      "observed": "16.665 m/s over 43.01 s; error -0.008%",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "3d",
+      "title": "Speed after change to 90 km/h",
+      "expected": "25.000 m/s",
+      "tolerance": "2%",
+      "observed": "24.999 m/s over 33.17 s; error -0.002%",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "3e",
+      "title": "Distance against speed and moving time",
+      "expected": "Sum of speed x time",
+      "tolerance": "2%",
+      "observed": "4926.6 m along the road against 4926.7 m expected over 178.20 s moving; error under 0.01%",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "4",
+      "title": "Paused fixes",
+      "expected": "Speed 0, one position",
+      "tolerance": "Exact",
+      "observed": "15 fixes over 13.71 s, one position, speed 0.0, no bearing",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "4b",
+      "title": "No position jump",
+      "expected": "Step within speed x gap",
+      "tolerance": "1.05 x",
+      "observed": "Largest ratio 1.005; resume continued from the paused position",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "9",
+      "title": "Stop cleanup",
+      "expected": "No providers, service, wake lock, or notification",
+      "tolerance": "None left",
+      "observed": "0 of each after Stop",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    }
+  ],
+  "evidence": [
+    {
+      "name": "delivery-observations-0.4.6.csv",
+      "kind": "raw",
+      "sha256": "69cf8c91f0425829ae4b57de072da42a51eb72c283a727a4b7c3a7dfbcfaa91b",
+      "size": 12126
+    }
+  ]
+}

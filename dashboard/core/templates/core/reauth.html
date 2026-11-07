@@ -1,0 +1,5 @@
+{% extends "core/base.html" %}{% block body %}
+<form class="card" method="post">{% csrf_token %}<h2>Confirm it is you</h2>
+<p>This action needs your password and code again.</p>{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<label>Password <input name="password" type="password" autocomplete="current-password" required></label>
+<label>Code <input name="code" autocomplete="one-time-code" required></label><button>Confirm</button></form>{% endblock %}

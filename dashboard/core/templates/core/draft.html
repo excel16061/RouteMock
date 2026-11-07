@@ -1,0 +1,7 @@
+{% extends "core/base.html" %}{% block body %}<section><h2>{{ draft.name }}</h2><table><tr><th>Version</th><th>Created (UTC)</th><th>Content</th></tr>
+{% for v in versions %}<tr><td>{{ v.number }}</td><td>{{ v.created_at }}</td><td><code>{{ v.payload }}</code></td></tr>{% endfor %}</table>
+<form method="post" action="/drafts/save">{% csrf_token %}<input type="hidden" name="draft_id" value="{{ draft.id }}"><input type="hidden" name="name" value="{{ draft.name }}">
+<label>New version JSON <textarea name="payload" rows="3" cols="70" required></textarea></label><button>Save new version</button></form></section>
+<section><h2>Request a simulation</h2><p class="note">This only asks. The phone's user must approve each request on the phone.</p>
+{% if devices %}<form method="post" action="/drafts/{{ draft.id }}/start">{% csrf_token %}<select name="device_id">{% for d in devices %}<option value="{{ d.id }}">{{ d.label }}</option>{% endfor %}</select> <button>Request start</button></form>{% else %}<p>No device has remote control turned on.</p>{% endif %}
+<table><tr><th>Requested (UTC)</th><th>Device</th><th>Status</th><th>Error</th></tr>{% for c in commands %}<tr><td>{{ c.created_at }}</td><td>{{ c.device.label }}</td><td>{{ c.status }}</td><td>{{ c.error }}</td></tr>{% endfor %}</table></section>{% endblock %}

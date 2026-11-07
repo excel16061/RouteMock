@@ -1,0 +1,36 @@
+{
+  "description": "Synthetic test route. It records no real journey.",
+  "synthetic_test_input": {
+    "start": {
+      "latitude": 52.5167,
+      "longitude": 13.4142
+    },
+    "destination": {
+      "latitude": 52.3906,
+      "longitude": 13.0645
+    },
+    "selected_speed": {
+      "value": 120,
+      "unit": "km/h"
+    }
+  },
+  "live_provider_response": {
+    "provider": "Valhalla (FOSSGIS public server)",
+    "attribution": "Routing: Valhalla on the FOSSGIS server. Data \u00a9 OpenStreetMap contributors (ODbL), CC-BY-SA",
+    "candidate_label": "Shortest of returned routes",
+    "distance_m": 31214.4,
+    "provider_estimated_duration_s": 4318.285,
+    "traffic_basis": "road-speed estimate, no live traffic",
+    "geometry_file": "selected-road-geometry.geojson"
+  },
+  "measured_during_device_test": {
+    "app_version": "0.4.0",
+    "moving_fixes": 59,
+    "elapsed_moving_time_s": 59.72,
+    "distance_along_road_m": 1990.6,
+    "measured_speed_m_per_s": 33.333,
+    "selected_speed_m_per_s": 33.333,
+    "scope": "First uninterrupted 120 km/h period",
+    "source": "Android location service records; see delivery-observations.csv"
+  }
+}

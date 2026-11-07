@@ -1,0 +1,4 @@
+{% extends "core/base.html" %}{% block body %}<section><h2>Research evidence index</h2>
+<p class="note">Repeated runs of one route are not independent routes or vulnerability cases.</p>
+<table><tr><th>Protocol</th><th>Run</th><th>State</th><th>Fixture</th><th>PASS</th><th>FAIL</th><th>INCONCLUSIVE</th><th>Limitations</th></tr>
+{% for run, c in rows %}<tr><td>{{ run.protocol_version }}</td><td><a href="/runs/{{ run.run_id }}">{{ run.title }}</a></td><td>{{ run.state }}</td><td>{{ run.route_fixture }}</td><td>{{ c.PASS }}</td><td>{{ c.FAIL }}</td><td>{{ c.INCONCLUSIVE }}</td><td>{{ run.limitations|truncatechars:80 }}</td></tr>{% empty %}<tr><td colspan="8">No runs.</td></tr>{% endfor %}</table></section>{% endblock %}

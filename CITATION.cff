@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you refer to this software, please cite it as below."
+title: "RouteMock"
+abstract: "An Android road-route simulation and testing platform with consent controls, a local authenticated dashboard, and reproducible evidence."
+type: software
+authors:
+  - family-names: "Ali"
+    given-names: "Syed Omer"
+repository-code: "https://github.com/excel16061/RouteMock"
+version: "0.4.7"

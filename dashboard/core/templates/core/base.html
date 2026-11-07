@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}RouteMock Dashboard{% endblock %}</title>
+<style>
+body{font:15px/1.5 system-ui,sans-serif;margin:0;color:#1c1c22;background:#f6f6f9}
+header{background:#24304f;color:#fff;padding:.7rem 1.2rem;display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap}
+header a{color:#fff;text-decoration:none}header strong{margin-right:1rem}
+main{max-width:1040px;margin:1.2rem auto;padding:0 1rem}
+section,form.card{background:#fff;border:1px solid #dcdce4;border-radius:8px;padding:1rem 1.2rem;margin-bottom:1rem}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:.35rem .5rem;border-bottom:1px solid #eee;vertical-align:top}
+.badge{padding:.05rem .45rem;border-radius:4px;font-size:.8rem;background:#e7e7ef}
+.PASS{background:#d6f2dc}.FAIL{background:#fbd9d7}.INCONCLUSIVE{background:#fdf0c8}
+.note{color:#555;font-size:.88rem}.error{color:#b00020}
+input,textarea,select{font:inherit;padding:.3rem;max-width:100%}button{font:inherit;padding:.3rem .8rem;cursor:pointer}
+label{display:block;margin:.5rem 0}form.inline{display:inline}
+</style></head><body>
+<header><strong>RouteMock Dashboard</strong>
+{% if request.user.is_authenticated and request.user.is_verified %}
+<a href="/">Overview</a><a href="/research">Research index</a><a href="/consent">Consent</a><a href="/audit">Audit</a><a href="/pairing">Pair device</a><a href="/account">Account</a>
+<form class="inline" method="post" action="/logout">{% csrf_token %}<button>Sign out</button></form>
+{% endif %}</header>
+<main>{% block body %}{% endblock %}</main></body></html>

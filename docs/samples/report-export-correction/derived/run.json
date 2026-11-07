@@ -1,0 +1,75 @@
+{
+  "schema": "routemock-run/1",
+  "run_id": "1705539d-72e6-44ba-9fce-749134711eea",
+  "state": "final",
+  "corrects": "c84e6df4-1c54-494e-b65c-ba2efa686867",
+  "title": "Correction of Road playback, one synthetic route",
+  "protocol_version": "road-playback-2",
+  "versions": {
+    "app": "0.4.0 to 0.4.5",
+    "backend": "0.1.0"
+  },
+  "source_revision": null,
+  "working_tree_dirty": true,
+  "route_fixture": "",
+  "selected_speed_kmh": null,
+  "configuration": {},
+  "device": {
+    "model": "REVVL 6 Pro",
+    "android_version": "13"
+  },
+  "started_at_utc": null,
+  "finished_at_utc": null,
+  "monotonic_duration_s": null,
+  "limitations": "This run corrects labels only. No new force-stop test was performed. Observations come from the original run.",
+  "deviations": "Check 10a of the original run was one PASS covering separate findings. It is split here so the cleanup limitation is not hidden. Check 4b reported a largest ratio of 1.003; recalculating every recorded fix gives 1.006, still within tolerance. All other original checks stand. The original run is unchanged.",
+  "counts": {
+    "PASS": 3,
+    "FAIL": 1,
+    "NOT TESTED": 0,
+    "INCONCLUSIVE": 0
+  },
+  "checks": [
+    {
+      "check_id": "10a-1",
+      "title": "Force-stop: simulation does not restart by itself",
+      "expected": "No restart",
+      "tolerance": "None",
+      "observed": "No process or service returned within 90 s (0.4.0, 0.4.5)",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "10a-2",
+      "title": "Force-stop: test providers removed without reopening the app",
+      "expected": "Providers removed",
+      "tolerance": "None",
+      "observed": "3 providers stayed registered for 90 s. No new fixes were produced, but last known stayed a stale mock fix. Android gives no callback at force-stop, so this is a known limitation (0.4.0, 0.4.5)",
+      "result": "FAIL",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "10a-3",
+      "title": "Force-stop: reopening RouteMock removes the providers",
+      "expected": "Providers removed on launch",
+      "tolerance": "None",
+      "observed": "0 providers after relaunch; last known no longer mock (0.4.5)",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "4b",
+      "title": "No position jump (recalculated)",
+      "expected": "Step within speed x gap",
+      "tolerance": "1.05 x",
+      "observed": "Largest ratio 1.006 across all recorded 0.4.0 fixes; 1.003 was reported originally",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    }
+  ],
+  "evidence": []
+}

@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}{% block body %}
+<section><h2>Paired devices</h2><table><tr><th>Label</th><th>Model</th><th>Android</th><th>Last seen (UTC)</th><th>Remote control</th><th></th></tr>
+{% for d in devices %}<tr><td>{{ d.label }}</td><td>{{ d.model_name }}</td><td>{{ d.android_version }}</td><td>{{ d.last_seen_at|default:"Never" }}</td>
+<td>{% if not d.active %}Revoked{% elif d.remote_control_enabled %}On{% else %}Off{% endif %}</td>
+<td>{% if d.active %}<form class="inline" method="post" action="/devices/{{ d.id }}">{% csrf_token %}<input type="hidden" name="action" value="{% if d.remote_control_enabled %}remote_off{% else %}remote_on{% endif %}"><button>{% if d.remote_control_enabled %}Turn off{% else %}Turn on{% endif %}</button></form>
+<form class="inline" method="post" action="/devices/{{ d.id }}">{% csrf_token %}<input type="hidden" name="action" value="revoke"><button>Revoke</button></form>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="6">No paired devices.</td></tr>{% endfor %}</table></section>
+<section><h2>Route drafts</h2><p class="note">Changes add a version and apply to drafts only. They never alter a running simulation.</p><ul>
+{% for d in drafts %}<li><a href="/drafts/{{ d.id }}">{{ d.name }}</a> <span class="note">v{{ d.latest.number }}</span></li>{% empty %}<li>No drafts.</li>{% endfor %}</ul>
+<form method="post" action="/drafts/save">{% csrf_token %}<label>Name <input name="name" required></label>
+<label>Draft JSON <textarea name="payload" rows="3" cols="70" required>{"mode":"STATIONARY","start":{"latitude":0,"longitude":0}}</textarea></label><button>Save draft</button></form></section>
+<section><h2>Simulation profiles</h2><ul>{% for p in profiles %}<li>{{ p.name }}: {{ p.speed_kmh }} km/h{% if p.repeat %}, repeating{% endif %}</li>{% empty %}<li>No profiles.</li>{% endfor %}</ul></section>
+<section><h2>Test runs</h2><table><tr><th>Run</th><th>State</th><th>PASS</th><th>FAIL</th><th>NOT TESTED</th><th>INCONCLUSIVE</th></tr>
+{% for run, c in runs %}<tr><td><a href="/runs/{{ run.run_id }}">{{ run.title }}</a></td><td>{{ run.state }}</td><td>{{ c.PASS }}</td><td>{{ c.FAIL }}</td><td>{% for k, v in c.items %}{% if k == "NOT TESTED" %}{{ v }}{% endif %}{% endfor %}</td><td>{{ c.INCONCLUSIVE }}</td></tr>
+{% empty %}<tr><td colspan="6">No runs.</td></tr>{% endfor %}</table></section>{% endblock %}

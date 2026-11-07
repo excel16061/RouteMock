@@ -1,0 +1,5 @@
+check_id,title,expected,tolerance,observed,result,source,basis
+10a-1,Force-stop: simulation does not restart by itself,No restart,None,"No process or service returned within 90 s (0.4.0, 0.4.5)",PASS,automated check,independent Android observation
+10a-2,Force-stop: test providers removed without reopening the app,Providers removed,None,"3 providers stayed registered for 90 s. No new fixes were produced, but last known stayed a stale mock fix. Android gives no callback at force-stop, so this is a known limitation (0.4.0, 0.4.5)",FAIL,automated check,independent Android observation
+10a-3,Force-stop: reopening RouteMock removes the providers,Providers removed on launch,None,0 providers after relaunch; last known no longer mock (0.4.5),PASS,automated check,independent Android observation
+4b,No position jump (recalculated),Step within speed x gap,1.05 x,Largest ratio 1.006 across all recorded 0.4.0 fixes; 1.003 was reported originally,PASS,automated check,independent Android observation

@@ -1,0 +1,12 @@
+check_id,title,expected,tolerance,observed,result,source,basis
+1,Mock flag preserved,Every fix flagged,All,189 of 189 flagged,PASS,automated check,independent Android observation
+2,Fixes follow the selected road,On the geometry,1 m,"Worst 0.059 m, mean 0.022 m over 189 fixes",PASS,automated check,independent Android observation
+2b,Turns,Stay on the road through turns,1 m,"5 bearing changes over 30 degrees, the largest 101.9; worst distance from road at those points 0.059 m",PASS,automated check,independent Android observation
+3a,"Speed at 120 km/h, before pause",33.333 m/s,2%,33.334 m/s over 62.72 s; error +0.001%,PASS,automated check,independent Android observation
+3b,"Speed at 120 km/h, after resume",33.333 m/s,2%,33.333 m/s over 35.87 s; error -0.001%,PASS,automated check,independent Android observation
+3c,Speed after change to 60 km/h,16.667 m/s,2%,16.665 m/s over 43.01 s; error -0.008%,PASS,automated check,independent Android observation
+3d,Speed after change to 90 km/h,25.000 m/s,2%,24.999 m/s over 33.17 s; error -0.002%,PASS,automated check,independent Android observation
+3e,Distance against speed and moving time,Sum of speed x time,2%,4926.6 m along the road against 4926.7 m expected over 178.20 s moving; error under 0.01%,PASS,automated check,independent Android observation
+4,Paused fixes,"Speed 0, one position",Exact,"15 fixes over 13.71 s, one position, speed 0.0, no bearing",PASS,automated check,independent Android observation
+4b,No position jump,Step within speed x gap,1.05 x,Largest ratio 1.005; resume continued from the paused position,PASS,automated check,independent Android observation
+9,Stop cleanup,"No providers, service, wake lock, or notification",None left,0 of each after Stop,PASS,automated check,other

@@ -1,0 +1,3 @@
+{% extends "core/base.html" %}{% block body %}<section><h2>Recovery codes</h2>
+<p>Store these somewhere safe now. They will not be shown again, and each works once.</p>
+<ul>{% for code in codes %}<li><code>{{ code }}</code></li>{% endfor %}</ul><a href="/">Continue</a></section>{% endblock %}

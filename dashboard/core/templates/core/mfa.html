@@ -1,0 +1,5 @@
+{% extends "core/base.html" %}{% block body %}
+<form class="card" method="post">{% csrf_token %}<h2>Second factor</h2>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<label>Authenticator or recovery code <input name="code" autocomplete="one-time-code" required></label>
+<button>Verify</button></form>{% endblock %}

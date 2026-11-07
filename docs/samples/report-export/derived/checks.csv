@@ -1,0 +1,14 @@
+check_id,title,expected,tolerance,observed,result,source,basis
+2,Fixes follow the selected road,On the geometry,1 m,Worst 0.063 m over 684 fixes (0.4.0); 0.054 m over 56 (0.4.4),PASS,automated check,independent Android observation
+3a,Speed at 120 km/h,33.333 m/s,2%,33.333 m/s over 59.72 s; error 0.000%,PASS,automated check,independent Android observation
+3b,Speed at 60 km/h,16.667 m/s,2%,16.666 m/s over 180.33 s; error -0.001%,PASS,automated check,independent Android observation
+4,Paused fixes,"Speed 0, one position",Exact,"54 fixes, one position per pause, speed 0.0, no bearing",PASS,automated check,independent Android observation
+4b,No position jump,Step within speed x gap,1.05 x,Largest ratio 1.003,PASS,automated check,independent Android observation
+5,Mock flag preserved,Every fix flagged,All,All flagged,PASS,automated check,independent Android observation
+6,Screen off,Fixes continue,Gap under 2 s,"30 s, longest gap 1.03 s",PASS,automated check,independent Android observation
+7,Draft changes leave session alone,Fixes stay on original road,1 m,290 fixes within 0.063 m,PASS,automated check,independent Android observation
+9,Stop cleanup,"No providers, service, or wake lock",None left,"0 mock providers, no service, lock released",PASS,automated check,other
+10a,Force-stop,"No restart, and recovery on relaunch",None,No restart. 3 providers stayed but produced no new fixes for 90 s; last known stayed a stale mock fix; relaunch removed them,PASS,automated check,independent Android observation
+11,Offline withdrawal synchronizes,Delivered on reconnect or relaunch,n/a,"Survived restart; delivered 5.0 s after reconnecting, and 4.3 s after relaunch",PASS,automated check,other
+10b,Low-memory process death,No restart,None,Could not be produced,NOT TESTED,manual observation,other
+12,Delivery to another app,Other app receives fixes,n/a,Not measured,NOT TESTED,manual observation,other

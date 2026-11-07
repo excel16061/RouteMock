@@ -1,0 +1,2 @@
+{% extends "core/base.html" %}{% block body %}<section><h2>Audit events</h2><table><tr><th>Time (UTC)</th><th>Action</th><th>Target</th></tr>
+{% for e in events %}<tr><td>{{ e.created_at }}</td><td>{{ e.action }}</td><td><code>{{ e.target }}</code></td></tr>{% empty %}<tr><td colspan="3">No events.</td></tr>{% endfor %}</table></section>{% endblock %}

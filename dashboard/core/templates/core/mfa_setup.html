@@ -1,0 +1,6 @@
+{% extends "core/base.html" %}{% block body %}
+<form class="card" method="post">{% csrf_token %}<h2>Set up your authenticator</h2>
+<p>A second factor is required. Scan this code, then enter the six digits shown.</p>
+<img src="{{ qr }}" alt="Authenticator setup code" width="220"><p class="note">Or enter this key by hand: {{ secret }}</p>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<label>Code <input name="code" autocomplete="one-time-code" required></label><button>Confirm</button></form>{% endblock %}

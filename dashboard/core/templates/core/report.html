@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Run report {{ data.run_id }}</title>
+<style>body{font:14px/1.5 system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:.3rem .5rem;text-align:left;vertical-align:top}</style></head><body>
+<h1>{{ data.title }}</h1><p>Run {{ data.run_id }}, state {{ data.state }}, protocol {{ data.protocol_version }}.</p>
+<p>App {{ data.versions.app }}, backend {{ data.versions.backend }}, revision {{ data.source_revision|default:"unavailable" }}, uncommitted changes: {{ data.working_tree_dirty|default_if_none:"unknown" }}.</p>
+<p>Device {{ data.device.model }}, Android {{ data.device.android_version }}. Fixture: {{ data.route_fixture }}. Speed: {{ data.selected_speed_kmh }} km/h.</p>
+<p>Started {{ data.started_at_utc }} UTC, finished {{ data.finished_at_utc }} UTC, monotonic duration {{ data.monotonic_duration_s }} s.</p>
+<table><tr><th>Check</th><th>Expected</th><th>Tolerance</th><th>Observed</th><th>Result</th><th>Source</th><th>Basis</th></tr>
+{% for c in data.checks %}<tr><td>{{ c.title }}</td><td>{{ c.expected }}</td><td>{{ c.tolerance }}</td><td>{{ c.observed }}</td><td>{{ c.result }}</td><td>{{ c.source }}</td><td>{{ c.basis }}</td></tr>{% endfor %}</table>
+<h2>Limitations</h2><p>{{ data.limitations|default:"None recorded." }}</p><h2>Deviations</h2><p>{{ data.deviations|default:"None recorded." }}</p>
+<p>Simulator state is not the same as observed delivery. Hashes detect change against a trusted manifest; they do not show that an observation is true.</p></body></html>

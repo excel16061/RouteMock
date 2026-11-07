@@ -1,0 +1,13 @@
+{% extends "core/base.html" %}{% block body %}<section><h2>{{ run.title }}</h2>
+<p><span class="badge">{{ run.state }}</span> Run ID <code>{{ run.run_id }}</code> · Protocol {{ run.protocol_version }}</p>
+{% if run.corrects %}<p>Corrects <a href="/runs/{{ run.corrects.run_id }}">{{ run.corrects.title }}</a></p>{% endif %}
+{% for c in run.corrections.all %}<p>Corrected by <a href="/runs/{{ c.run_id }}">{{ c.title }}</a></p>{% endfor %}
+<p>App {{ run.app_version|default:"unknown" }} · Backend {{ run.backend_version|default:"unknown" }} · Revision {{ run.source_revision|default:"unavailable" }}{% if run.working_tree_dirty %} (uncommitted changes){% endif %}</p>
+<p>Device {{ run.device_model }} · Android {{ run.android_version }} · Fixture {{ run.route_fixture|default:"none" }} · Speed {{ run.selected_speed_kmh|default:"n/a" }} km/h · Duration {{ run.monotonic_duration_s|default:"n/a" }} s</p>
+<p><a href="/runs/{{ run.run_id }}/export/json">JSON</a> · <a href="/runs/{{ run.run_id }}/export/csv">CSV</a> · <a href="/runs/{{ run.run_id }}/export/html">HTML report</a> · <a href="/runs/{{ run.run_id }}/export/zip">Evidence bundle</a></p>
+{% if run.state == "draft" %}<form method="post" action="/runs/{{ run.run_id }}/finalize">{% csrf_token %}<button>Finalize</button></form>{% else %}<form method="post" action="/runs/{{ run.run_id }}/correct">{% csrf_token %}<button>Create linked correction</button></form>{% endif %}</section>
+<section><h3>Checks</h3><table><tr><th>Check</th><th>Expected</th><th>Tolerance</th><th>Observed</th><th>Result</th><th>Source</th><th>Basis</th></tr>
+{% for c in checks %}<tr><td>{{ c.title }}</td><td>{{ c.expected }}</td><td>{{ c.tolerance }}</td><td>{{ c.observed }}</td><td><span class="badge {{ c.result }}">{{ c.result }}</span></td><td>{{ c.source }}</td><td>{{ c.basis }}</td></tr>{% empty %}<tr><td colspan="7">No checks recorded.</td></tr>{% endfor %}</table></section>
+<section><h3>Evidence</h3><table><tr><th>Name</th><th>Kind</th><th>SHA-256</th></tr>{% for e in items %}<tr><td><a href="/evidence/{{ e.id }}">{{ e.name }}</a></td><td>{{ e.kind }}</td><td><code>{{ e.sha256 }}</code></td></tr>{% empty %}<tr><td colspan="3">No evidence.</td></tr>{% endfor %}</table>
+{% if run.state == "draft" %}<form method="post" action="/runs/{{ run.run_id }}/evidence" enctype="multipart/form-data">{% csrf_token %}<input type="file" name="file" required> <select name="kind"><option value="raw">raw</option><option value="derived">derived</option></select> <button>Upload</button></form>{% endif %}
+<p class="note">Limitations: {{ run.limitations|default:"none recorded" }}. Deviations: {{ run.deviations|default:"none recorded" }}.</p></section>{% endblock %}

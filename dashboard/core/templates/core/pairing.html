@@ -1,0 +1,4 @@
+{% extends "core/base.html" %}{% block body %}<section><h2>Pair a device</h2>
+{% if code %}<p>Enter this code on the phone within 10 minutes. It works once.</p><p><code>{{ code }}</code></p>{% endif %}
+<form method="post">{% csrf_token %}<label>Pseudonymous label <input name="label" maxlength="60" placeholder="Test phone A" required></label><button>Create pairing code</button></form>
+<p class="note">Use a pseudonym, not a name or device identifier. Remote control stays off until you turn it on.</p></section>{% endblock %}

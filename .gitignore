@@ -1,0 +1,64 @@
+# Local machine configuration
+local.properties
+
+# Build outputs
+build/
+.gradle/
+.kotlin/
+.cxx/
+captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+output-metadata.json
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Credentials and signing material
+.env
+.env.*
+!.env.example
+secrets.properties
+keystore.properties
+signing.properties
+google-services.json
+*service-account*.json
+*.keystore
+*.jks
+*.pem
+*.p12
+*.key
+
+# Device logs and captures
+logs/
+device-logs/
+consent-receipt*.json
+*.log
+logcat*.txt
+bugreport*.zip
+bugreport*.txt
+*.hprof
+
+# Machine-specific toolchain paths (env.sh.example is the template)
+env.sh
+
+# Local assistant settings and session data
+.claude/
+
+# Dashboard local state: never publish databases, secrets, or uploaded evidence
+dashboard/.venv/
+dashboard/.env
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+*.dump
+dashboard/private-evidence/
+dashboard/exports/
+__pycache__/
+*.pyc
