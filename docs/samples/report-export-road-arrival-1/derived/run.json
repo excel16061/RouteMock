@@ -1,0 +1,144 @@
+{
+  "schema": "routemock-run/1",
+  "run_id": "df94be8f-ea33-462e-8872-f434ef499bce",
+  "state": "final",
+  "corrects": null,
+  "title": "Road arrival on 0.4.7, one synthetic route",
+  "protocol_version": "road-arrival-1",
+  "versions": {
+    "app": "0.4.7",
+    "backend": "0.1.1"
+  },
+  "source_revision": "c551ce7",
+  "working_tree_dirty": false,
+  "route_fixture": "Map-selected synthetic Berlin points; live Valhalla route, 1319.29 m",
+  "selected_speed_kmh": 30.0,
+  "configuration": {
+    "repeat": false,
+    "debug_apk_sha256": "e889a053efac0efd41afdd61d7cea99a641770a1b33d486a52f861f2b31adcef",
+    "device_label": "Test phone A",
+    "expected_arrival_behavior": "explicit stationary endpoint hold",
+    "behavior_declared_at_utc": "2026-11-07T02:20:10Z",
+    "requested_start": [
+      52.480628,
+      13.318309
+    ],
+    "requested_destination": [
+      52.480058,
+      13.329752
+    ],
+    "route_start": [
+      52.480622,
+      13.31891
+    ],
+    "route_end": [
+      52.480101,
+      13.329937
+    ],
+    "start_snap_m": 40.7,
+    "end_snap_m": 13.4,
+    "provider": "Valhalla (FOSSGIS public server)",
+    "route_calculated_at_utc": "2026-11-07T02:28:00Z"
+  },
+  "device": {
+    "model": "REVVL 6 Pro",
+    "android_version": "13"
+  },
+  "started_at_utc": "2026-11-07T02:29:44+00:00",
+  "finished_at_utc": "2026-11-07T02:32:54+00:00",
+  "monotonic_duration_s": 185.42,
+  "limitations": "One physical phone, one route, one speed, one run. Fixes are sampled at about 1 s, so the arrival moment is known to about one tick. App status was sampled every 1 to 2 s. Delivery to other apps not measured.",
+  "deviations": "The start pin was placed by a map tap, and the destination pin by dragging, because taps near a pin do not reach the map. The route was saved temporarily to read its geometry, then deleted. The commit is the protocol revision; the app source matches 0.4.7.",
+  "counts": {
+    "PASS": 7,
+    "FAIL": 0,
+    "NOT TESTED": 0,
+    "INCONCLUSIVE": 0
+  },
+  "checks": [
+    {
+      "check_id": "A1",
+      "title": "Delivery",
+      "expected": "Every observed fix has the mock flag",
+      "tolerance": "All",
+      "observed": "181 of 181 flagged",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "A2",
+      "title": "Road geometry",
+      "expected": "On the selected geometry",
+      "tolerance": "1 m",
+      "observed": "Worst 0.055 m, mean 0.020 m over 181 fixes, through 8 route turns over 30 degrees",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "A3",
+      "title": "Arrival delivery",
+      "expected": "Terminal fix at the final geometry point",
+      "tolerance": "1 m",
+      "observed": "First and last terminal fixes 0.000 m from the final point",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "A4",
+      "title": "Completion time",
+      "expected": "158.31 s, from distance / speed",
+      "tolerance": "3.17 s",
+      "observed": "158.67 s from first fix to first terminal fix, +0.35 s. Sampling uncertainty about 1 s. Extrapolated from the last moving fix: 158.31 s",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "A5",
+      "title": "Completion state",
+      "expected": "One arrival, no repeat, zero remaining",
+      "tolerance": "Display precision",
+      "observed": "Status went Moving then Arrived once; 0 m and 0:00:00 remaining; along-road distance never fell",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    },
+    {
+      "check_id": "A6",
+      "title": "Endpoint behavior",
+      "expected": "Stationary hold at speed zero, as declared",
+      "tolerance": "Exact",
+      "observed": "27 fixes over 26.75 s, one position, speed 0.0, no bearing; session stayed active until Stop",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "A7",
+      "title": "Explicit Stop",
+      "expected": "No providers, service, wake lock, or notification",
+      "tolerance": "None left",
+      "observed": "0 of each 5 s after Stop",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    }
+  ],
+  "evidence": [
+    {
+      "name": "delivery-observations-road-arrival-1.csv",
+      "kind": "raw",
+      "sha256": "d1c34ad4fb8f203cebb42c124f2a92be67d6f9b5d64218bd3f74fff9d5077fa0",
+      "size": 11267
+    },
+    {
+      "name": "road-arrival-1-geometry.json",
+      "kind": "raw",
+      "sha256": "68654a1acf36d2e58341881b78b1fca378ee31da2ce5b4c9cc46cc478d53ba51",
+      "size": 2259
+    }
+  ]
+}

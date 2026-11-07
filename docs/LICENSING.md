@@ -39,7 +39,7 @@ These do not change, whatever is chosen above.
 
 | Material | Terms | What it means |
 | --- | --- | --- |
-| Road geometry: `docs/samples/selected-road-geometry.geojson`, recorded fixtures in `app/src/test/resources/fixtures/` | **ODbL 1.0**, derived from OpenStreetMap | Must credit "© OpenStreetMap contributors". Adapted databases that are shared stay under the ODbL |
+| Road geometry: `docs/samples/selected-road-geometry.geojson`, `docs/samples/road-arrival-1-geometry.geojson`, recorded fixtures in `app/src/test/resources/fixtures/` | **ODbL 1.0**, derived from OpenStreetMap | Must credit "© OpenStreetMap contributors". Adapted databases that are shared stay under the ODbL |
 | Recorded positions along that route: `docs/samples/delivery-observations*.csv` and export copies | **Treat as ODbL** | They follow OpenStreetMap-derived geometry. Treating them this way is the cautious reading, and a reviewer should confirm it |
 | Screenshots showing the map | Carry the map's attribution | Keep "OpenFreeMap © OpenMapTiles, Data from OpenStreetMap" visible |
 | Third-party components | See [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md) | Those licenses stay with those components. The project license does not replace them |

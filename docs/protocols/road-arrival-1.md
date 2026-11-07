@@ -1,6 +1,6 @@
 # Protocol road-arrival-1
 
-Status: NOT RUN. This protocol adds no passing result to the verification totals.
+Status: run once, on RouteMock 0.4.7 (run `df94be8f-ea33-462e-8872-f434ef499bce`). Results are in the [verification report](../samples/verification-report.md). The criteria below are unchanged.
 
 ## Purpose
 

@@ -1,0 +1,8 @@
+check_id,title,expected,tolerance,observed,result,source,basis
+A1,Delivery,Every observed fix has the mock flag,All,181 of 181 flagged,PASS,automated check,independent Android observation
+A2,Road geometry,On the selected geometry,1 m,"Worst 0.055 m, mean 0.020 m over 181 fixes, through 8 route turns over 30 degrees",PASS,automated check,independent Android observation
+A3,Arrival delivery,Terminal fix at the final geometry point,1 m,First and last terminal fixes 0.000 m from the final point,PASS,automated check,independent Android observation
+A4,Completion time,"158.31 s, from distance / speed",3.17 s,"158.67 s from first fix to first terminal fix, +0.35 s. Sampling uncertainty about 1 s. Extrapolated from the last moving fix: 158.31 s",PASS,automated check,independent Android observation
+A5,Completion state,"One arrival, no repeat, zero remaining",Display precision,Status went Moving then Arrived once; 0 m and 0:00:00 remaining; along-road distance never fell,PASS,automated check,other
+A6,Endpoint behavior,"Stationary hold at speed zero, as declared",Exact,"27 fixes over 26.75 s, one position, speed 0.0, no bearing; session stayed active until Stop",PASS,automated check,independent Android observation
+A7,Explicit Stop,"No providers, service, wake lock, or notification",None left,0 of each 5 s after Stop,PASS,automated check,other

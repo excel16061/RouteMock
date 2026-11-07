@@ -1,6 +1,6 @@
 # RouteMock final handoff
 
-Current state, on 2026-11-07. The check-by-check record is the
+Current state, on 2026-11-07, after protocol road-arrival-1. The check-by-check record is the
 [verification report](verification-report.md).
 
 **Status:** RouteMock 0.4.7 is published and installed on the phone. No consent is in force, and test resources are cleaned up. The dashboard is local only and not deployed.
@@ -22,7 +22,7 @@ No license is applied.
 | App source | **0.4.7**, versionCode 11 |
 | SDK levels | Compile 36, target 36, minimum 29 |
 | Debug APK SHA-256 | `e889a053efac0efd41afdd61d7cea99a641770a1b33d486a52f861f2b31adcef` |
-| Release APK SHA-256 | `ae433b709d9c50c7ff65ae3365cad680f26edd6284d478938ee7cb13ff978484`, unsigned, not installed. This hash differed between two clean builds of the same source, so release builds are not byte-reproducible here |
+| Release APK SHA-256 | `5174eb405d065bf297a4fc4a719ba4308f4c1bd93f0dcf4f79d83877b5b57c66`, unsigned, not installed. This hash differs between clean builds of the same source, so release builds are not byte-reproducible here |
 | Installed on the phone | 0.4.7, same hash as the debug APK, installed with `adb install -r` |
 | Dashboard | 0.1.1, Django 6.1.3 |
 
@@ -52,10 +52,10 @@ network and was run separately on 0.4.6.
 
 | Kind | PASS | FAIL | NOT TESTED | Other |
 | --- | --- | --- | --- | --- |
-| Physical-device checks | 35 | 1 | 6 | 8 PASS on 0.4.7; 27 PASS and 1 FAIL historical |
+| Physical-device checks | 36 | 1 | 5 | 9 PASS on 0.4.7; 27 PASS and 1 FAIL historical |
 | Automated unit and backend tests | 388 | 0 | 0 | 1 skipped |
 | Static APK inspection | 6 | 0 | 0 | |
-| Live-provider checks | 4 | 0 | 0 | 1 on 0.4.6, 3 historical |
+| Live-provider checks | 5 | 0 | 0 | 1 on 0.4.7, 4 historical |
 
 These are not added together. The 1 FAIL is the force-stop cleanup limitation below.
 
@@ -79,7 +79,22 @@ The app kept one process ID throughout, and the crash log gained no lines. Repli
 dashboard over loopback HTTP. The earlier 0.4.6 measurements are kept as history in the
 [verification report](verification-report.md).
 
-**Live provider:** `LiveValhallaCheck` last ran on 0.4.6, and was not repeated on 0.4.7.
+**Live provider:** one route was calculated on the phone on 0.4.7. `LiveValhallaCheck` last ran on
+0.4.6.
+
+## Road arrival (road-arrival-1)
+
+Run `df94be8f-ea33-462e-8872-f434ef499bce` on 0.4.7, on a separate 1.32 km route at 30 km/h. **All seven criteria passed.**
+
+| Check | Observed | Limit |
+| --- | --- | --- |
+| Delivery | 181 of 181 mock-flagged | All |
+| Road geometry | Worst 0.055 m | 1 m |
+| Arrival delivery | 0.000 m from the final geometry point | 1 m |
+| Completion time | 158.67 s against 158.31 s, +0.35 s; sampling uncertainty about 1 s | 3.17 s |
+| Completion state | One arrival, 0 m remaining, no repeat | |
+| Endpoint behavior | Stationary hold as declared: 27 fixes over 26.75 s at speed 0.0 | |
+| Explicit Stop | No providers, service, wake lock, or notification | |
 
 ## Remaining limitations
 
@@ -89,8 +104,7 @@ dashboard over loopback HTTP. The earlier 0.4.6 measurements are kept as history
 2. Low-memory process death
 3. Release APK at runtime
 4. A phone restart clearing abandoned test providers
-5. Reaching the end of a road route (the longest run covered about 7.5 km of 31.21 km)
-6. Android 14 or later
+5. Android 14 or later
 
 **Force-stop, as separate findings:**
 
@@ -101,8 +115,10 @@ dashboard over loopback HTTP. The earlier 0.4.6 measurements are kept as history
 
 **Also:**
 
-- Evaluation covers one physical Android 13 phone, one played road route, one routing provider, and
+- Evaluation covers one physical Android 13 phone, two played road routes, one routing provider, and
   one map tile provider.
+- Arrival was observed once, on a 1.32 km route at 30 km/h. The 31.21 km route has not been driven to
+  its end.
 - Most device results are historical and were not repeated on 0.4.7.
 - Malformed replies were tested in the listed shapes, over loopback HTTP, not over HTTPS.
 - Device-to-device transfer was not exercised.
@@ -121,9 +137,9 @@ dashboard over loopback HTTP. The earlier 0.4.6 measurements are kept as history
 | Mock location | `WITHDRAWN` |
 | Dashboard upload | `WITHDRAWN` |
 
-- The receipt holds 33 events and 1 correction. The last event is at 01:46:41 UTC on 2026-11-07.
+- The receipt holds 35 events and 1 correction. The last event is at 02:35:26 UTC on 2026-11-07.
 - The first 29 events and the correction are unchanged, and all 29 stay origin `UNKNOWN`.
-- The 0.4.6 and 0.4.7 runs each added an acceptance and its withdrawal, all `AUTOMATED_TEST`. None is
+- The later test runs each added an acceptance and its withdrawal, all `AUTOMATED_TEST`. None is
   anyone's personal acceptance.
 - The consent screen shows four unticked boxes.
 - The consent documents are unchanged and remain drafts pending legal review.

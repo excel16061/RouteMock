@@ -57,6 +57,12 @@ Follow [road-playback-2](protocols/road-playback-2.md), using the points in
 run may get a different route as OpenStreetMap changes. Use
 [selected-road-geometry.geojson](samples/selected-road-geometry.geojson) to compare with this one.
 
+## Road arrival
+
+Follow [road-arrival-1](protocols/road-arrival-1.md). Its route comes from a live response, so a new run
+may get different geometry. Use
+[road-arrival-1-geometry.geojson](samples/road-arrival-1-geometry.geojson) to compare.
+
 ## Device tests
 
 Install with `adb install -r`, and select RouteMock as the mock location app. Do not touch the
@@ -73,7 +79,7 @@ done on the phone while it exists gets that label, even by a person.
 
 ```sh
 shasum -a 256 -c docs/EVIDENCE_MANIFEST.sha256
-for d in report-export report-export-correction report-export-0.4.6 report-export-0.4.7; do
+for d in report-export report-export-correction report-export-0.4.6 report-export-0.4.7 report-export-road-arrival-1; do
   (cd docs/samples/$d && grep -v '^#' MANIFEST.sha256 | shasum -a 256 -c)
 done
 ```

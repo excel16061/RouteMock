@@ -13,7 +13,7 @@ direct great-circle path and ignores roads, buildings, water, and terrain.
 This is a testing tool. It does not change your physical location, and Android marks its
 locations as mock.
 
-**Evaluation scope:** one physical Android 13 phone, one played road route, one routing provider,
+**Evaluation scope:** one physical Android 13 phone, two played road routes, one routing provider,
 and one map tile provider. See [Verification](#verification).
 
 **Status:** version 0.4.7. Live traffic is **not configured**, and place-name search is not
@@ -499,8 +499,8 @@ stuck, reopen RouteMock or restart the phone.
   mock fixes are produced, but the last known position stays a stale simulated one. Android gives
   the app no chance to clean up. Opening RouteMock fixes it. See
   [recovery notes](docs/FORCE_STOP_RECOVERY.md).
-- **Evaluation is narrow:** one phone, one played route, and one routing provider. No road run
-  reached the destination, and most device results predate 0.4.7.
+- **Evaluation is narrow:** one phone, two played routes, and one routing provider. Arrival was
+  observed once, on a 1.32 km route, and most device results predate 0.4.7.
 - **The Simulated and Delivered markers can overlap**, so one label may hide the other.
 - **Routing availability** depends on a volunteer-run server with no guarantee. Very
   long routes can be refused.
@@ -545,10 +545,10 @@ Evidence is kept in four separate kinds, which are not added together. The
 
 | Kind | PASS | FAIL | NOT TESTED | Notes |
 | --- | --- | --- | --- | --- |
-| Physical-device checks | 35 | 1 | 6 | One REVVL 6 Pro on Android 13. 8 PASS on 0.4.7; the rest are from 0.4.0 to 0.4.5 |
+| Physical-device checks | 36 | 1 | 5 | One REVVL 6 Pro on Android 13. 9 PASS on 0.4.7; the rest are from 0.4.0 to 0.4.5 |
 | Automated tests | 388 | 0 | | 297 Android and 91 dashboard; 1 opt-in network test skipped |
 | Static APK inspection | 6 | 0 | | Release APK read without running it |
-| Live-provider checks | 4 | 0 | | Public Valhalla server. 1 on 0.4.6; 3 historical |
+| Live-provider checks | 5 | 0 | | Public Valhalla server. 1 on 0.4.7; 4 historical |
 
 **The one FAIL** is a known limitation: after a force-stop, test providers stay registered until
 RouteMock is reopened, and the last known position stays a stale simulated one. The simulation itself
@@ -560,11 +560,19 @@ selection at 120 and 60 km/h. The run covered the first 3.54 km of a 31.21 km ro
 dashboard replies served during it had no effect. See the
 [export](docs/samples/report-export-0.4.7/derived/report.html).
 
+**Road arrival on 0.4.7:** a separate run on a 1.32 km route at 30 km/h went from start to destination
+with no intervention. All 181 fixes were mock-flagged, within 0.055 m of the road. Android delivered
+the exact final point, and arrival came 0.35 s after the expected 158.31 s. The app then held the
+destination at zero speed until Stop, as expected. See the
+[export](docs/samples/report-export-road-arrival-1/derived/report.html).
+
+![Holding at the destination](docs/screenshots/road-arrival-held.png)
+
 ### Verified features
 
 Confirmed on the phone, on the build shown in the report:
 
-- Road playback, including turns, pause, resume, and live speed changes
+- Road playback, including turns, pause, resume, live speed changes, and arrival
 - Stop cleanup of providers, service, wake lock, and notification
 - Notification controls, rotation, section switching, background, and brief screen off
 - The consent gate, withdrawal online and offline, and test-event labeling
@@ -576,8 +584,7 @@ session boundary is covered by unit tests, as a phone cannot reach it directly.
 ### Not tested
 
 Delivery to another app, a real low-memory process death, the
-release APK on a device, a phone restart clearing leftover providers, reaching the end of a road
-route on a device, Android 14 or later, device-to-device transfer, and any deployment of the
+release APK on a device, a phone restart clearing leftover providers, Android 14 or later, device-to-device transfer, and any deployment of the
 dashboard.
 
 ### Reproducing the results

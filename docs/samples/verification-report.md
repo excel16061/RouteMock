@@ -7,8 +7,8 @@ builds are marked historical.
 **Hardware:** one physical phone, a REVVL 6 Pro on Android 13. Dashboard tests with "two devices"
 used two **backend device records** in a test database, never two phones.
 
-**Scope:** one road route was played, 31.21 km, the "Shortest of returned routes" from four routes in
-a live response. One routing provider (the FOSSGIS Valhalla server) and one map tile provider
+**Scope:** two distinct road routes were played: 31.21 km, partly, and 1.32 km, to arrival. Each came
+from one live response. One routing provider (the FOSSGIS Valhalla server) and one map tile provider
 (OpenFreeMap) were used. Stationary sessions used a synthetic point. The source was uncommitted, so
 no revision identifier exists.
 
@@ -16,14 +16,14 @@ no revision identifier exists.
 
 | Kind | What it shows | PASS | FAIL | NOT TESTED | Other |
 | --- | --- | --- | --- | --- | --- |
-| [Physical-device checks](#physical-device-checks) | Behavior on the one real phone | 35 | 1 | 6 | |
+| [Physical-device checks](#physical-device-checks) | Behavior on the one real phone | 36 | 1 | 5 | |
 | [Automated tests](#automated-tests) | Logic on a computer, with no phone | 388 | 0 | 0 | 1 skipped |
 | [Static APK inspection](#static-apk-inspection) | What is inside the built file | 6 | 0 | 0 | |
-| [Live-provider checks](#live-provider-checks) | Responses from the real routing service | 4 | 0 | 0 | |
+| [Live-provider checks](#live-provider-checks) | Responses from the real routing service | 5 | 0 | 0 | |
 
-- **Device split:** 8 PASS on the current 0.4.7 build. The other 27 PASS and the 1 FAIL are historical,
+- **Device split:** 9 PASS on the current 0.4.7 build. The other 27 PASS and the 1 FAIL are historical,
   from 0.4.0 to 0.4.5, and were not repeated on 0.4.7.
-- **Live-provider split:** 1 PASS on 0.4.6, and 3 historical.
+- **Live-provider split:** 1 PASS on 0.4.7, and 4 historical.
 - **The 1 FAIL** is the force-stop cleanup limitation in check D17. Android gives the app no chance
   to clean up at that moment, so the app cannot fix it, but the outcome is still not a pass.
 
@@ -88,13 +88,59 @@ All 9 bad command replies arrived by the time of Stop, while the session ran. Re
 logged, so the first may have come just before Start. **Limits:** these replies came over loopback
 HTTP, not HTTPS, and they are the listed shapes only, not every possible bad reply.
 
+### Road arrival (protocol road-arrival-1)
+
+Run `df94be8f-ea33-462e-8872-f434ef499bce` under [road-arrival-1](../protocols/road-arrival-1.md) on 2026-11-07, at source revision
+`c551ce7`, with a clean working tree. The installed APK was the same `e889a053...` build. Device
+label: Test phone A.
+
+This was a **separate full run on a new route**, not a continuation of earlier partial runs. See the
+[observations](delivery-observations-road-arrival-1.csv),
+[geometry](road-arrival-1-geometry.geojson), and
+[export](report-export-road-arrival-1/derived/report.html).
+
+| Input | Value |
+| --- | --- |
+| Requested start and destination | 52.480628, 13.318309 and 52.480058, 13.329752 |
+| Route start and end (snapped) | 52.480622, 13.31891 and 52.480101, 13.329937, which are 40.7 m and 13.4 m from the pins |
+| Route | 1319.29 m, 8 turns over 30 degrees, the only route returned |
+| Provider | Valhalla on the FOSSGIS public server, one live request |
+| Speed, repeat | 30 km/h, off. No speed change, pause, or manual Stop before arrival |
+| Expected duration | 158.31 s |
+| Expected arrival behavior | Explicit stationary endpoint hold, declared at 02:20:10 UTC, before the route was chosen |
+
+| Check | Criterion | Observed | Result |
+| --- | --- | --- | --- |
+| Delivery | Every fix has the mock flag | 181 of 181 | PASS |
+| Road geometry | At most 1 m | Worst 0.055 m, mean 0.020 m | PASS |
+| Arrival delivery | Terminal fix within 1 m of the final geometry point | 0.000 m at six decimal places | PASS |
+| Completion time | Within 3.17 s of 158.31 s | 158.67 s, +0.35 s | PASS |
+| Completion state | One arrival, no repeat, zero remaining | Moving, then Arrived, once; 0 m and 0:00:00 remaining | PASS |
+| Endpoint behavior | Stationary hold at speed zero | 27 fixes over 26.75 s, one position, speed 0.0, no bearing | PASS |
+| Explicit Stop | Nothing left afterwards | 0 providers, service, wake lock, and notification, checked 5 s after Stop | PASS |
+
+**Timing:** measured from Android's elapsed-realtime fix timestamps, from the first observed fix
+(0.0 m along the road) to the first terminal fix. **Sampling uncertainty is about 1 s**, the interval
+between fixes. Extrapolating from the last moving fix, 5.71 m short of the end, gives 158.31 s. The
+longest gap between fixes was 1.09 s. The first fix came 2.73 s after the Start tap, and this delay is
+not part of the measured time.
+
+**Time window:** observation continued for 25.1 s after the app first showed arrival. During the hold,
+the session stayed active: 3 providers, the service, and the wake lock, as declared. App status was
+sampled every 1 to 2 s, so a very brief extra state could be missed. Along-road distance never fell,
+which supports there being no restart.
+
+**Deviations:** the start pin was placed with a map tap, and the destination pin by dragging, as taps
+near a pin do not reach the map. The route was saved temporarily to read its geometry and then
+deleted, leaving saved routes byte-identical.
+
 ## Physical-device checks
 
 "Current" means run on 0.4.7. "Historical" means the result is from the build shown and was not
 repeated on 0.4.7. Since 0.4.5, the app has changed only in its backup rules and its handling of
 malformed dashboard replies.
 
-### Current build, 0.4.7 (8 PASS)
+### Current build, 0.4.7 (9 PASS)
 
 | # | Check | Build | Result | Evidence |
 | --- | --- | --- | --- | --- |
@@ -106,6 +152,7 @@ malformed dashboard replies.
 | D6 | Upgrade keeps saved data | 0.4.7 | PASS | Saved routes and consent receipt byte-identical before and after install |
 | D7 | Automated consent labeled | 0.4.7 | PASS | Events recorded `AUTOMATED_TEST`, subject to the label's limit below |
 | D38 | Invalid server responses | 0.4.7 | PASS | The listed replies, over loopback HTTP. See above |
+| D41 | Reaching the end of a road route | 0.4.7 | PASS | Protocol road-arrival-1, on the 1.32 km route at 30 km/h. See above. The 31.21 km route has not been driven to its end |
 
 ### Historical (27 PASS, 1 FAIL)
 
@@ -140,7 +187,7 @@ malformed dashboard replies.
 | D34 | Offline required withdrawal | 0.4.5 | PASS | Session stopped at once; server updated 5.0 s after reconnecting |
 | D35 | Offline Withdraw all, delivered on relaunch | 0.4.5 | PASS | Server unchanged while the app stayed closed; revoked 4.3 s after launch |
 
-### NOT TESTED (6)
+### NOT TESTED (5)
 
 | # | Check | Why |
 | --- | --- | --- |
@@ -148,7 +195,6 @@ malformed dashboard replies.
 | D37 | Low-memory process death | `adb` could not cause it: `kill` was denied, and `am kill` leaves foreground services alone |
 | D39 | Release APK at runtime | Its signature differs from the debug build, so installing it needs an uninstall, which was ruled out |
 | D40 | Phone restart clearing abandoned test providers | No restart was performed |
-| D41 | Reaching the end of a road route | No recorded run got there. The longest covered about 7.5 km of 31.21 km. Arrival is covered by unit tests only |
 | D42 | Android 14 or later | Only Android 13 is available |
 
 ## Automated tests
@@ -170,7 +216,6 @@ Some behavior is proven **only** here, not on a phone:
 | --- | --- |
 | Consent required at the session boundary | The service is not exported and the UI is gated, so a phone cannot reach it |
 | Dashboard refuses pairing without consent (HTTP 403) | Backend behavior. The phone's side is D24 |
-| Arrival at the end of a road route | See D41 |
 | Backup rules cover every storage domain | `BackupRulesTest` reads the rule files. D5 is the phone's side |
 
 ## Static APK inspection
@@ -197,7 +242,8 @@ Checks against the public FOSSGIS Valhalla server, subject to its availability. 
 
 | # | Check | Build | Where | Result | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| L1 | `LiveValhallaCheck`: routes and a real failure | 0.4.6 (latest, not repeated on 0.4.7) | Computer | PASS | 4 distinct routes, shortest 31.214 km; points at sea returned "no road near pin". One run, paced requests |
+| L5 | Route calculated for road-arrival-1 | **0.4.7 (current)** | Phone | PASS | One route, 1.32 km, labeled with its traffic basis |
+| L1 | `LiveValhallaCheck`: routes and a real failure | 0.4.6 (not repeated on 0.4.7) | Computer | PASS | 4 distinct routes, shortest 31.214 km; points at sea returned "no road near pin". One run, paced requests |
 | L2 | `LiveValhallaCheck` | 0.3.0 | Computer | PASS | Historical |
 | L3 | Calculate, compare, select routes | 0.4.0 | Phone | PASS | 31.21, 36.10, 40.27, 40.53 km with labels and traffic basis |
 | L4 | Routing failure shown | 0.4.0 | Phone | PASS | "No road was found near a pin" |
@@ -218,6 +264,7 @@ finalized run stays as it was in [report-export](report-export/), and its linked
 | C6 | Road-route arrival not listed as a gap | Added as D41, after the raw logs showed that no run reached the destination |
 | C7 | Largest step ratio reported as 1.003 on 0.4.0 | Recalculating every recorded fix gives 1.006. Still within 1.05 |
 | C8 | Invalid server responses on a device NOT TESTED | Closed for the listed replies by the 0.4.7 run (D38) |
+| C9 | Reaching the end of a road route NOT TESTED | Closed by run road-arrival-1 (D41), on one short route at one speed |
 
 ## How acceptance was handled
 
@@ -234,7 +281,9 @@ finalized run stays as it was in [report-export](report-export/), and its linked
   both `AUTOMATED_TEST`. The receipt count matched what the script expected at each step.
 - **The 0.4.7 run** added 2 more, an acceptance of all four scopes and its withdrawal, both
   `AUTOMATED_TEST`. All earlier events and the correction stayed unchanged.
-- **Current state:** 33 events, all four scopes `WITHDRAWN`, no consent in force.
+- **The road-arrival-1 run** added 2 more, an acceptance of the three required scopes and its
+  withdrawal, both `AUTOMATED_TEST`.
+- **Current state:** 35 events, all four scopes `WITHDRAWN`, no consent in force.
 
 **Disclosure:** the 0.4.0 run used a temporary low-level touch monitor, which recorded touch
 times. One earlier 8-second diagnostic also read touch positions. This should not have been
@@ -313,6 +362,6 @@ until the operator revokes it, and queued commands expire within 5 minutes.
 
 ## Limitations
 
-One phone, one played route, one routing provider, one provider response for the played route.
-Road runs covered only the start of the route. Repeated phases are not independent routes. Polling
+One phone, two played routes, one routing provider, and one provider response per route. Arrival was
+observed once, on the short route at 30 km/h. Runs on the long route covered only its start. Repeated phases are not independent routes. Polling
 observes most but not all fixes. No claim is made about other apps.
