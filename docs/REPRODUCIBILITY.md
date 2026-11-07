@@ -68,6 +68,22 @@ may get different geometry. Use
 Build the [location observer](../tools/location-observer/README.md), then follow
 [observer-delivery-1](protocols/observer-delivery-1.md). Install it only with the phone owner's approval.
 
+## Android 14 emulator
+
+The emulator used its own SDK folder, so a shared SDK stayed untouched. Accept the SDK licenses
+yourself first. Homebrew's `avdmanager` ignored the separate folder, so the AVD was written by hand as
+an `.ini` file and a `config.ini` that point at the API 34 image.
+
+```sh
+sdkmanager --sdk_root="$HOME/RouteMock-android-sdk" --licenses
+sdkmanager --sdk_root="$HOME/RouteMock-android-sdk" "platform-tools" "emulator" \
+  "system-images;android-34;google_apis;arm64-v8a"
+ANDROID_SDK_ROOT="$HOME/RouteMock-android-sdk" ANDROID_AVD_HOME="$HOME/RouteMock-android-sdk/avd" \
+  "$HOME/RouteMock-android-sdk/emulator/emulator" -avd routemock-api34 -no-window -no-snapshot
+```
+
+Emulator results are evidence about the emulator, not about a phone.
+
 ## Device tests
 
 Install with `adb install -r`, and select RouteMock as the mock location app. Do not touch the
@@ -84,7 +100,7 @@ done on the phone while it exists gets that label, even by a person.
 
 ```sh
 shasum -a 256 -c docs/EVIDENCE_MANIFEST.sha256
-for d in report-export report-export-correction report-export-0.4.6 report-export-0.4.7 report-export-road-arrival-1 report-export-observer-delivery-1; do
+for d in report-export report-export-correction report-export-0.4.6 report-export-0.4.7 report-export-road-arrival-1 report-export-observer-delivery-1 report-export-emulator-api34; do
   (cd docs/samples/$d && grep -v '^#' MANIFEST.sha256 | shasum -a 256 -c)
 done
 ```

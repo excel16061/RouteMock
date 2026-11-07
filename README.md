@@ -552,6 +552,7 @@ Evidence is kept in four separate kinds, which are not added together. The
 | Automated tests | 388 | 0 | | 297 Android and 91 dashboard; 1 opt-in network test skipped |
 | Static APK inspection | 6 | 0 | | Release APK read without running it |
 | Live-provider checks | 6 | 0 | | Public Valhalla server. 2 on 0.4.7; 4 historical |
+| Emulator checks | 9 | 0 | | Android 14 emulator, API 34. Not a physical device, and not counted above |
 
 **The one FAIL** is a known limitation: after a force-stop, test providers stay registered until
 RouteMock is reopened, and the last known position stays a stale simulated one. The simulation itself
@@ -594,7 +595,7 @@ session boundary is covered by unit tests, as a phone cannot reach it directly.
 ### Not tested
 
 A real low-memory process death, the
-release APK on a device, a phone restart clearing leftover providers, Android 14 or later, device-to-device transfer, and any deployment of the
+release APK on a device, a phone restart clearing leftover providers, Android 14 or later on a physical phone (an Android 14 emulator passed separately), device-to-device transfer, and any deployment of the
 dashboard.
 
 ### Reproducing the results

@@ -56,6 +56,7 @@ network and was run separately on 0.4.6.
 | Automated unit and backend tests | 388 | 0 | 0 | 1 skipped |
 | Static APK inspection | 6 | 0 | 0 | |
 | Live-provider checks | 6 | 0 | 0 | 2 on 0.4.7, 4 historical |
+| Emulator checks | 9 | 0 | 0 | Android 14 emulator; not a physical device |
 
 These are not added together. The 1 FAIL is the force-stop cleanup limitation below.
 
@@ -116,7 +117,8 @@ worst distance from the road 0.055 m, and speed error +0.000%.
 1. Low-memory process death
 2. Release APK at runtime
 3. A phone restart clearing abandoned test providers
-4. Android 14 or later
+4. Android 14 or later on a physical phone. An Android 14 (API 34) emulator passed all nine of its checks,
+   recorded separately as emulator evidence
 
 **Force-stop, as separate findings:**
 

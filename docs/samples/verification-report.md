@@ -20,6 +20,7 @@ no revision identifier exists.
 | [Automated tests](#automated-tests) | Logic on a computer, with no phone | 388 | 0 | 0 | 1 skipped |
 | [Static APK inspection](#static-apk-inspection) | What is inside the built file | 6 | 0 | 0 | |
 | [Live-provider checks](#live-provider-checks) | Responses from the real routing service | 6 | 0 | 0 | |
+| [Emulator checks](#emulator-evidence-android-14) | Behavior on an Android 14 emulator, not a phone | 9 | 0 | 0 | |
 
 - **Device split:** 10 PASS on the current 0.4.7 build. The other 27 PASS and the 1 FAIL are historical,
   from 0.4.0 to 0.4.5, and were not repeated on 0.4.7.
@@ -179,6 +180,41 @@ Valhalla request. See the [export](delivery-observations-observer-delivery-1.csv
 **Scope of this pass:** one test app, through `LocationManager` and the GPS provider, on one phone. It
 says nothing about apps using Google Play services, or about apps that reject mock locations.
 
+## Emulator evidence (Android 14)
+
+**This is emulator evidence, not a physical-device result.** It is counted separately and does not
+close D42, which stays NOT TESTED until a physical Android 14 or later phone is tested.
+
+Run `14391547-6f88-4986-a0ee-648a21100fa9` on 2026-11-07, with RouteMock 0.4.7 (`e889a053...`, installed fresh) at commit `d99067c`.
+See the [observations](delivery-observations-emulator-api34.csv) and
+[report](report-export-emulator-api34/derived/report.html).
+
+| Target | Value |
+| --- | --- |
+| Type | Android Emulator 37.2.13, AVD in a separate SDK folder |
+| Image | `system-images;android-34;google_apis;arm64-v8a`, revision 14 |
+| Android | 14, API 34, build `UE1A.230829.050`, userdebug, security patch 2023-09-05 |
+| Model | `sdk_gphone64_arm64`, arm64-v8a, software rendering |
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| E1 | First launch | PASS | A fresh install opened to the consent gate, with no receipt and no crash |
+| E2 | Consent | PASS | Three required boxes enabled Continue; one `AUTOMATED_TEST` acceptance recorded |
+| E3 | Start before mock-app selection | PASS | Refused: "RouteMock is not the selected mock location app", with setup steps; nothing started |
+| E4 | Mock-app selection | PASS | RouteMock listed under **Select mock location app** in Developer options and selected there; app-op `allow` |
+| E5 | Foreground-service startup | PASS | Android 14 asked for notification permission, answered Allow; service foreground with type `specialUse` (`0x40000000`); 3 providers; no crash |
+| E6 | Playback through arrival | PASS | 190 fixes, all mock-flagged; worst 0.057 m from the road; speed -0.001%; arrival 0.17 s after the expected 158.31 s |
+| E7 | Endpoint hold | PASS | 33 fixes over 32.29 s, 0.000 m from the final point, speed 0.0; the service stayed foreground |
+| E8 | Stop cleanup | PASS | 0 providers, service, wake lock, and notification; no last mock record |
+| E9 | Consent withdrawal | PASS | Withdraw all left every scope `WITHDRAWN` |
+
+**Route:** typed synthetic points returned the same 1,319.29 m route as road-arrival-1, and it was saved
+on the emulator as `RM-emulator-test`. It is not a new distinct route. Fixes came from the emulator's
+location records, read outside the app.
+
+**Limits:** one emulator image, one run, with software rendering. The test automation answered the
+notification prompt. Swiping away the notification, which Android 14 allows, was not tried.
+
 ## Physical-device checks
 
 "Current" means run on 0.4.7. "Historical" means the result is from the build shown and was not
@@ -240,7 +276,7 @@ malformed dashboard replies.
 | D37 | Low-memory process death | `adb` could not cause it: `kill` was denied, and `am kill` leaves foreground services alone |
 | D39 | Release APK at runtime | Its signature differs from the debug build, so installing it needs an uninstall, which was ruled out |
 | D40 | Phone restart clearing abandoned test providers | No restart was performed |
-| D42 | Android 14 or later | Only Android 13 is available |
+| D42 | Android 14 or later | Only Android 13 is available on a physical phone. An Android 14 emulator passed separately, which does not count here |
 
 ## Automated tests
 

@@ -1,0 +1,144 @@
+{
+  "schema": "routemock-run/1",
+  "run_id": "14391547-6f88-4986-a0ee-648a21100fa9",
+  "state": "final",
+  "corrects": null,
+  "title": "Android 14 emulator compatibility, one synthetic route",
+  "protocol_version": "emulator-compat",
+  "versions": {
+    "app": "0.4.7",
+    "backend": "0.1.1"
+  },
+  "source_revision": "d99067c",
+  "working_tree_dirty": false,
+  "route_fixture": "Typed synthetic Berlin points; live Valhalla route, 1319.29 m",
+  "selected_speed_kmh": 30.0,
+  "configuration": {
+    "target_type": "emulator",
+    "avd": "routemock-api34",
+    "system_image": "system-images;android-34;google_apis;arm64-v8a, revision 14",
+    "emulator_version": "37.2.13",
+    "android_release": "14",
+    "api_level": 34,
+    "build_id": "UE1A.230829.050",
+    "build_type": "userdebug",
+    "security_patch": "2023-09-05",
+    "routemock_apk_sha256": "e889a053efac0efd41afdd61d7cea99a641770a1b33d486a52f861f2b31adcef",
+    "repeat": false
+  },
+  "device": {
+    "model": "Android Emulator (sdk_gphone64_arm64)",
+    "android_version": "14"
+  },
+  "started_at_utc": "2026-11-07T23:31:32+00:00",
+  "finished_at_utc": "2026-11-07T23:56:46+00:00",
+  "monotonic_duration_s": null,
+  "limitations": "Emulator evidence only: not a physical device, and it does not close device check D42. One emulator image, one route, one run. Software rendering.",
+  "deviations": "Endpoints were typed rather than chosen on the map. The notification permission prompt was answered Allow by the test automation.",
+  "counts": {
+    "PASS": 9,
+    "FAIL": 0,
+    "NOT TESTED": 0,
+    "INCONCLUSIVE": 0
+  },
+  "checks": [
+    {
+      "check_id": "E1",
+      "title": "First launch",
+      "expected": "Consent gate on a fresh install",
+      "tolerance": "None",
+      "observed": "Onboarding shown; no receipt; no crash",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    },
+    {
+      "check_id": "E2",
+      "title": "Consent",
+      "expected": "Required scopes recorded as test acceptance",
+      "tolerance": "None",
+      "observed": "Three boxes ticked, Continue enabled, one AUTOMATED_TEST acceptance",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    },
+    {
+      "check_id": "E3",
+      "title": "Start before mock-app selection",
+      "expected": "Refused with setup guidance, nothing running",
+      "tolerance": "None",
+      "observed": "\"RouteMock is not the selected mock location app\"; no service, providers, wake lock, or notification",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    },
+    {
+      "check_id": "E4",
+      "title": "Mock-app selection",
+      "expected": "RouteMock selectable in Developer options",
+      "tolerance": "None",
+      "observed": "Listed and selected through Settings; app-op allow",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    },
+    {
+      "check_id": "E5",
+      "title": "Foreground-service startup",
+      "expected": "Starts under Android 14 rules",
+      "tolerance": "None",
+      "observed": "Notification permission prompt shown and allowed; service foreground with type specialUse (0x40000000); 3 providers; no crash",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    },
+    {
+      "check_id": "E6",
+      "title": "Playback through arrival",
+      "expected": "On the road, at the selected speed, on time",
+      "tolerance": "1 m; 2%; 3.17 s",
+      "observed": "190 fixes all mock-flagged; worst 0.057 m; speed -0.001%; arrival +0.17 s after 158.31 s",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "E7",
+      "title": "Endpoint hold",
+      "expected": "Zero-speed hold at the final point",
+      "tolerance": "1 m",
+      "observed": "33 fixes over 32.29 s, 0.000 m from the final point, speed 0.0; service stayed foreground",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "E8",
+      "title": "Stop cleanup",
+      "expected": "Nothing left",
+      "tolerance": "None",
+      "observed": "0 providers, service, wake lock, and notification; no last mock record",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    },
+    {
+      "check_id": "E9",
+      "title": "Consent withdrawal",
+      "expected": "No consent in force",
+      "tolerance": "None",
+      "observed": "Withdraw all left every scope WITHDRAWN and four unticked boxes",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    }
+  ],
+  "evidence": [
+    {
+      "name": "delivery-observations-emulator-api34.csv",
+      "kind": "raw",
+      "sha256": "18559965086a8438aff8e76c80539186630419af410fd6823be6ff238d43ea5c",
+      "size": 11747
+    }
+  ]
+}

@@ -13,6 +13,7 @@ is selected. 0.4.7 is installed on the phone. The check-by-check record is the
 | Automated tests | Logic on a computer, with no phone | 388 | 0 | | 1 |
 | Static APK inspection | What is inside the built file | 6 | 0 | | |
 | Live-provider checks | Responses from the real routing service | 6 | 0 | | |
+| Emulator checks | Android 14 emulator, not a phone | 9 | 0 | | |
 
 - **Device checks:** 10 PASS are current, on 0.4.7. The other 27 PASS and the 1 FAIL are historical,
   from 0.4.0 to 0.4.5.
@@ -55,6 +56,13 @@ Protocol observer-delivery-1 passed all eight criteria. A separately installed t
 fresh mock callbacks through `LocationManager`, matching Android's own record one for one, with 53
 during the endpoint hold and none in the 92 seconds after Stop. Cached reads were kept apart and not
 counted. This covers one test app only.
+
+## Android 14 emulator
+
+On an Android 14 (API 34) emulator, RouteMock 0.4.7 passed all nine checks: first launch, consent,
+refusal before mock-app selection, selection in Developer options, foreground-service startup with the
+`specialUse` type, playback through arrival, zero-speed hold, Stop cleanup, and consent withdrawal.
+This is emulator evidence. **D42 stays NOT TESTED** for a physical Android 14 or later phone.
 
 ## Force-stop
 

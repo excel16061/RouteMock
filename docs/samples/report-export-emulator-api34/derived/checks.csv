@@ -1,0 +1,10 @@
+check_id,title,expected,tolerance,observed,result,source,basis
+E1,First launch,Consent gate on a fresh install,None,Onboarding shown; no receipt; no crash,PASS,automated check,other
+E2,Consent,Required scopes recorded as test acceptance,None,"Three boxes ticked, Continue enabled, one AUTOMATED_TEST acceptance",PASS,automated check,other
+E3,Start before mock-app selection,"Refused with setup guidance, nothing running",None,"""RouteMock is not the selected mock location app""; no service, providers, wake lock, or notification",PASS,automated check,other
+E4,Mock-app selection,RouteMock selectable in Developer options,None,Listed and selected through Settings; app-op allow,PASS,automated check,other
+E5,Foreground-service startup,Starts under Android 14 rules,None,Notification permission prompt shown and allowed; service foreground with type specialUse (0x40000000); 3 providers; no crash,PASS,automated check,other
+E6,Playback through arrival,"On the road, at the selected speed, on time",1 m; 2%; 3.17 s,190 fixes all mock-flagged; worst 0.057 m; speed -0.001%; arrival +0.17 s after 158.31 s,PASS,automated check,independent Android observation
+E7,Endpoint hold,Zero-speed hold at the final point,1 m,"33 fixes over 32.29 s, 0.000 m from the final point, speed 0.0; service stayed foreground",PASS,automated check,independent Android observation
+E8,Stop cleanup,Nothing left,None,"0 providers, service, wake lock, and notification; no last mock record",PASS,automated check,other
+E9,Consent withdrawal,No consent in force,None,Withdraw all left every scope WITHDRAWN and four unticked boxes,PASS,automated check,other

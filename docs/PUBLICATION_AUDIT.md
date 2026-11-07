@@ -1,6 +1,6 @@
 # Publication audit
 
-Scope: all 242 published files, including hidden files and the final reports. These are automated text searches plus inspection of every image. A clean result
+Scope: all 249 published files, including hidden files and the final reports. These are automated text searches plus inspection of every image. A clean result
 is not proof that nothing sensitive remains, and this cannot cover caches, forks, or other copies.
 
 ## Scanners
@@ -79,7 +79,7 @@ visible in screenshots, and the OpenStreetMap and routing attribution in sample 
 
 ## Screenshots
 
-All 14 images in `docs/screenshots/` were opened and inspected. Phone images use synthetic routes
+All 15 images in `docs/screenshots/` were opened and inspected. Phone images use synthetic routes
 and show no real-location marker, personal notifications, or account details. One shows the age and
 accuracy of the last real fix, with no coordinates. The status bar's clock is the only device
 information, and some show Berlin time because mocking changed the phone's time zone. Dashboard
