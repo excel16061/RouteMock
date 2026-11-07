@@ -8,12 +8,14 @@ Nothing here records a real journey. Do not read these files as travel.
 | `selected-road-geometry.geojson` | The selected route geometry | Live provider response for synthetic points. Data © OpenStreetMap contributors (ODbL) |
 | `delivery-observations.csv` | Fixes as recorded by Android | Independently observed Android delivery, for the main run |
 | `delivery-observations-final-build.csv` | The same, for 0.4.4 | Independently observed Android delivery |
-| `delivery-observations-0.4.6.csv` | The same, for the current build | Independently observed Android delivery |
+| `delivery-observations-0.4.6.csv` | The same, for 0.4.6 | Independently observed Android delivery |
+| `delivery-observations-0.4.7.csv` | The same, for the current build | Independently observed Android delivery |
 | `verification-report.md` | Master record of device, automated, static, and live-provider results | Report |
 | `final-handoff.md` | Current status | Report |
 | `report-export/` | The original finalized run as exported by the dashboard: JSON, CSV, HTML, PDF, and manifest. Kept unchanged | Real measurements, entered from the verification report |
 | `report-export-correction/` | A linked correction of that run. It splits the force-stop result | No new observations |
-| `report-export-0.4.6/` | The finalized road run on the current build | Real measurements |
+| `report-export-0.4.6/` | The finalized road run on 0.4.6 | Real measurements |
+| `report-export-0.4.7/` | The finalized road and dashboard-reply run on the current build | Real measurements |
 
 **Categories used across the project:**
 
@@ -27,7 +29,7 @@ Nothing here records a real journey. Do not read these files as travel.
 printed from `derived/report.html` afterwards. Check it from that folder with
 `grep -v '^#' MANIFEST.sha256 | shasum -a 256 -c`.
 
-The two newer export folders have their own `MANIFEST.sha256`, checked the same way, and no PDF.
+The three newer export folders have their own `MANIFEST.sha256`, checked the same way, and no PDF.
 
 `../EVIDENCE_MANIFEST.sha256` covers this folder, `../screenshots/`, and the main reports. It does
 not list itself. Hashes detect changes

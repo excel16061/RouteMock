@@ -16,7 +16,7 @@ locations as mock.
 **Evaluation scope:** one physical Android 13 phone, one played road route, one routing provider,
 and one map tile provider. See [Verification](#verification).
 
-**Status:** version 0.4.7. The last build tested on the phone is 0.4.6. Live traffic is **not configured**, and place-name search is not
+**Status:** version 0.4.7. Live traffic is **not configured**, and place-name search is not
 implemented. The dashboard has only run locally and **is not ready to deploy**. No license has been
 chosen yet, so all rights are reserved for now, and the consent documents are drafts pending legal
 review.
@@ -500,7 +500,7 @@ stuck, reopen RouteMock or restart the phone.
   the app no chance to clean up. Opening RouteMock fixes it. See
   [recovery notes](docs/FORCE_STOP_RECOVERY.md).
 - **Evaluation is narrow:** one phone, one played route, and one routing provider. No road run
-  reached the destination, and most device results predate 0.4.6.
+  reached the destination, and most device results predate 0.4.7.
 - **The Simulated and Delivered markers can overlap**, so one label may hide the other.
 - **Routing availability** depends on a volunteer-run server with no guarantee. Very
   long routes can be refused.
@@ -545,7 +545,7 @@ Evidence is kept in four separate kinds, which are not added together. The
 
 | Kind | PASS | FAIL | NOT TESTED | Notes |
 | --- | --- | --- | --- | --- |
-| Physical-device checks | 34 | 1 | 7 | One REVVL 6 Pro on Android 13. 7 PASS on 0.4.6; the rest are from 0.4.0 to 0.4.5. 0.4.7 is not yet on the phone |
+| Physical-device checks | 35 | 1 | 6 | One REVVL 6 Pro on Android 13. 8 PASS on 0.4.7; the rest are from 0.4.0 to 0.4.5 |
 | Automated tests | 388 | 0 | | 297 Android and 91 dashboard; 1 opt-in network test skipped |
 | Static APK inspection | 6 | 0 | | Release APK read without running it |
 | Live-provider checks | 4 | 0 | | Public Valhalla server. 1 on 0.4.6; 3 historical |
@@ -554,10 +554,11 @@ Evidence is kept in four separate kinds, which are not added together. The
 RouteMock is reopened, and the last known position stays a stale simulated one. The simulation itself
 does not restart. See the [recovery notes](docs/FORCE_STOP_RECOVERY.md).
 
-**Road playback on 0.4.6:** 189 fixes observed through Android's own records, all mock-flagged. The
-worst distance from the road was 0.059 m, through 5 sharp turns. Speed stayed within 0.008% of the
-selection at 120, 60, and 90 km/h. The run covered the first 4.93 km of a 31.21 km route. See the
-[export](docs/samples/report-export-0.4.6/derived/report.html).
+**Road playback on 0.4.7:** 127 fixes observed through Android's own records, all mock-flagged. The
+worst distance from the road was 0.057 m, through 5 sharp turns. Speed stayed within 0.013% of the
+selection at 120 and 60 km/h. The run covered the first 3.54 km of a 31.21 km route, and malformed
+dashboard replies served during it had no effect. See the
+[export](docs/samples/report-export-0.4.7/derived/report.html).
 
 ### Verified features
 
@@ -574,7 +575,7 @@ session boundary is covered by unit tests, as a phone cannot reach it directly.
 
 ### Not tested
 
-Delivery to another app, a real low-memory process death, invalid server responses on a device, the
+Delivery to another app, a real low-memory process death, the
 release APK on a device, a phone restart clearing leftover providers, reaching the end of a road
 route on a device, Android 14 or later, device-to-device transfer, and any deployment of the
 dashboard.

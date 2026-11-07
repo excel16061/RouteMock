@@ -11,8 +11,8 @@ Force-stop is two separate findings, and only one of them is a pass:
 | Reopening RouteMock removes them | PASS on 0.4.5 |
 
 Android gives the app no chance to clean up at that moment, so RouteMock cannot fix this. These
-results are historical. Force-stop was not repeated on 0.4.6, which differs from 0.4.5 only by
-backup rules and its version number.
+results are historical. Force-stop was not repeated on 0.4.6 or 0.4.7. Since 0.4.5, the app has
+changed only in its backup rules and its handling of malformed dashboard replies.
 
 ## What was observed
 

@@ -1,7 +1,7 @@
 # Final report
 
 Milestone state: RouteMock 0.4.7 and dashboard 0.1.1. The dashboard is not deployed, and no license
-is selected. The last build tested on the phone is 0.4.6. The check-by-check record is the
+is selected. 0.4.7 is installed on the phone. The check-by-check record is the
 [verification report](samples/verification-report.md), and current status is in the
 [handoff](samples/final-handoff.md).
 
@@ -9,12 +9,12 @@ is selected. The last build tested on the phone is 0.4.6. The check-by-check rec
 
 | Kind | What it shows | PASS | FAIL | NOT TESTED | Skipped |
 | --- | --- | --- | --- | --- | --- |
-| Physical-device checks | Behavior on one real phone | 34 | 1 | 7 | |
+| Physical-device checks | Behavior on one real phone | 35 | 1 | 6 | |
 | Automated tests | Logic on a computer, with no phone | 388 | 0 | | 1 |
 | Static APK inspection | What is inside the built file | 6 | 0 | | |
 | Live-provider checks | Responses from the real routing service | 4 | 0 | | |
 
-- **Device checks:** 7 PASS are the latest, on 0.4.6. The other 27 PASS and the 1 FAIL are historical,
+- **Device checks:** 8 PASS are current, on 0.4.7. The other 27 PASS and the 1 FAIL are historical,
   from 0.4.0 to 0.4.5.
 - **The 1 FAIL** is a known limitation: after a force-stop, test providers stay registered until
   RouteMock is reopened.
@@ -35,12 +35,13 @@ Run from clean on 0.4.7, with every task forced to execute and no build cache.
   1 `OldTargetApi`. See the [lint review](LINT_REVIEW.md).
 - Django system check: no issues. Migration check: no changes needed.
 
-## Latest road playback (0.4.6)
+## Road playback on the current build
 
-189 Android-delivered fixes on 0.4.6, all mock-flagged. Worst distance from the road was 0.059 m
-through 5 sharp turns. Speed was within 0.008% of the selection at 120, 60, and 90 km/h. Pause held
-one position at speed 0.0, resume continued from it, and Stop left nothing behind. The run covered the
-first 4.93 km of the 31.21 km route.
+127 Android-delivered fixes on 0.4.7, all mock-flagged. Worst distance from the road was 0.057 m
+through 5 sharp turns. Speed was within 0.013% of the selection at 120 and 60 km/h. Pause held one
+position at speed 0.0, resume continued from it, and Stop left nothing behind. The run covered the
+first 3.54 km of the 31.21 km route. Meanwhile, a fake dashboard served 9 malformed command replies,
+after 6 malformed pairing replies, with no crash and no effect on the session.
 
 ## Force-stop
 
@@ -67,8 +68,7 @@ Stale mock data stays available as last known location until then. See
 
 - One phone, one played route, one routing provider, and one map tile provider.
 - No road run reached the destination. The longest covered about 7.5 km of 31.21 km.
-- Most device results are historical and were not repeated on 0.4.6.
-- Version 0.4.7 has not been installed on a phone.
+- Most device results are historical and were not repeated on 0.4.7.
 - Repeated phases are not independent routes or cases.
 - The session-level consent check is proven by unit tests, as no phone can reach it directly.
 - The test-mode label records whatever happens while the marker exists, including a person's actions.
@@ -81,4 +81,3 @@ Stale mock data stays available as last known location until then. See
 - Software, documentation, and data licenses: [LICENSING.md](LICENSING.md).
 - Legal review of the consent documents: [legal/README.md](legal/README.md).
 - Your own consent acceptance on the phone.
-- Installing 0.4.7 on the phone.

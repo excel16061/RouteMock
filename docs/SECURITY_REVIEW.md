@@ -24,7 +24,7 @@ and [Auto Backup](https://developer.android.com/identity/data/autobackup) guides
 ## Verified
 
 "Live" means a real local server. "Test" means an automated test. "Phone" means the physical test
-phone, on 0.4.6 or earlier. "Build" means the release APK file.
+phone, on the build in the verification report. "Build" means the release APK file.
 
 | Area | Result | How |
 | --- | --- | --- |
@@ -33,7 +33,7 @@ phone, on 0.4.6 or earlier. "Build" means the release APK file.
 | Debug loopback exception is narrow | Only `127.0.0.1`, no subdomains, in `src/debug` only, and absent from release | Build, source |
 | Credentials are not forwarded across hosts | Redirects are never followed; the token goes only to the requested URL | Test |
 | Timeouts, cancellation, response limits | 20 s connect and read timeouts, cancellation closes the socket, 8 MiB limit | Test |
-| Safe errors | Malformed replies become failed requests | Test |
+| Safe errors | Malformed replies become failed requests, and a session keeps running | Test, Phone |
 | No logging of credentials or locations | The app contains no log calls. The dashboard logs event names only | Source search |
 | No server secrets in the APK or browser | Routing key empty in this build; no secret reaches templates | Build, source |
 | Login, lockout, generic errors | Refused with one message; lockout after 5 failures | Test, Live |
@@ -71,7 +71,7 @@ none exist.
 | Protection | Why |
 | --- | --- |
 | Rejecting cleartext at runtime in a release build | The release APK has not been run on a device |
-| The 0.4.7 reply handling on a phone | Unit tests only; the phone runs 0.4.6 |
+| Reply handling over HTTPS, and shapes beyond those listed | The phone test used loopback HTTP and a fixed list of replies |
 | Real TLS: `Secure` cookies, HSTS, HTTPS redirect | The dashboard has only run over loopback HTTP |
 | Device-to-device transfer | Needs a second phone |
 | Behavior on Android 14 and later | Only Android 13 is available |

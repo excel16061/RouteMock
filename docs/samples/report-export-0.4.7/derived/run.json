@@ -1,0 +1,169 @@
+{
+  "schema": "routemock-run/1",
+  "run_id": "f8ac89a2-08aa-471d-9110-654dbc4946dc",
+  "state": "final",
+  "corrects": null,
+  "title": "Road playback and dashboard replies on 0.4.7",
+  "protocol_version": "road-playback-2",
+  "versions": {
+    "app": "0.4.7",
+    "backend": "0.1.1"
+  },
+  "source_revision": "16611618fedea1d1090a6b9f51d5ee3704e6a269",
+  "working_tree_dirty": false,
+  "route_fixture": "Saved synthetic Berlin to Potsdam route; earlier live Valhalla geometry, 31.21 km",
+  "selected_speed_kmh": 120.0,
+  "configuration": {
+    "other_speeds_kmh": [
+      60
+    ],
+    "tick_seconds": 1,
+    "debug_apk_sha256": "e889a053efac0efd41afdd61d7cea99a641770a1b33d486a52f861f2b31adcef",
+    "dashboard": "Fake dashboard on loopback, serving malformed replies"
+  },
+  "device": {
+    "model": "REVVL 6 Pro",
+    "android_version": "13"
+  },
+  "started_at_utc": "2026-11-07T01:42:54+00:00",
+  "finished_at_utc": "2026-11-07T01:45:04+00:00",
+  "monotonic_duration_s": 128.1,
+  "limitations": "One physical phone, one route, one provider response. The run covered the first 3.54 km of 31.21 km and did not reach the destination. The 60 km/h phase lasted 11.51 s. Replies came over loopback HTTP from a fake dashboard, not over HTTPS. Polling sees most fixes, not necessarily all. Delivery to other apps not measured.",
+  "deviations": "Malformed dashboard replies were served during the session. Reply times were not logged, so the first poll may have come just before Start.",
+  "counts": {
+    "PASS": 12,
+    "FAIL": 0,
+    "NOT TESTED": 0,
+    "INCONCLUSIVE": 0
+  },
+  "checks": [
+    {
+      "check_id": "1",
+      "title": "Mock flag preserved",
+      "expected": "Every fix flagged",
+      "tolerance": "All",
+      "observed": "127 of 127 flagged",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "2",
+      "title": "Fixes follow the selected road",
+      "expected": "On the geometry",
+      "tolerance": "1 m",
+      "observed": "Worst 0.057 m, mean 0.023 m over 127 fixes",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "2b",
+      "title": "Turns",
+      "expected": "Stay on the road through turns",
+      "tolerance": "1 m",
+      "observed": "5 bearing changes over 30 degrees, the largest 101.9; worst distance from road at those points 0.042 m",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "3a",
+      "title": "Speed at 120 km/h, before pause",
+      "expected": "33.333 m/s",
+      "tolerance": "2%",
+      "observed": "33.333 m/s over 60.76 s; error -0.002%",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "3b",
+      "title": "Speed at 120 km/h, after resume",
+      "expected": "33.333 m/s",
+      "tolerance": "2%",
+      "observed": "33.334 m/s over 37.90 s; error +0.001%",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "3c",
+      "title": "Speed after change to 60 km/h",
+      "expected": "16.667 m/s",
+      "tolerance": "2%",
+      "observed": "16.669 m/s over 11.51 s; error +0.013%",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "3e",
+      "title": "Distance against speed and moving time",
+      "expected": "Sum of speed x time",
+      "tolerance": "2%",
+      "observed": "3543.0 m along the road against 3545.5 m expected over 112.12 s moving; error -0.07%, at the speed-change boundary",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "4",
+      "title": "Paused fixes",
+      "expected": "Speed 0, one position",
+      "tolerance": "Exact",
+      "observed": "17 fixes over 15.58 s, one position, speed 0.0, no bearing",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "4b",
+      "title": "No position jump",
+      "expected": "Step within speed x gap",
+      "tolerance": "1.05 x",
+      "observed": "Largest ratio 1.004; resume continued from the paused position",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "9",
+      "title": "Stop cleanup",
+      "expected": "No providers, service, wake lock, or notification",
+      "tolerance": "None left",
+      "observed": "0 of each after Stop",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    },
+    {
+      "check_id": "13a",
+      "title": "Malformed pairing replies",
+      "expected": "Refused, no pairing, no crash",
+      "tolerance": "None",
+      "observed": "6 replies refused: missing, unsafe, short, and non-text credentials, not JSON, HTTP 500. Same process throughout; a valid reply then paired",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    },
+    {
+      "check_id": "13b",
+      "title": "Malformed command replies during a session",
+      "expected": "Ignored, no crash, session continues",
+      "tolerance": "None",
+      "observed": "9 replies: wrong types, missing field, array root, not JSON, bad command, HTTP 500, 9 MiB body. Same process, no new crash log lines, session kept delivering fixes",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    }
+  ],
+  "evidence": [
+    {
+      "name": "delivery-observations-0.4.7.csv",
+      "kind": "raw",
+      "sha256": "d9363e21081e5a84c40347fced8504d1e16fc61a2198927446934667c771a593",
+      "size": 8154
+    }
+  ]
+}

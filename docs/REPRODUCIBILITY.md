@@ -53,8 +53,7 @@ Then dump the file named by the second command with `dump xmltree`. It should ha
 ## Road playback
 
 Follow [road-playback-2](protocols/road-playback-2.md), using the points in
-[synthetic-route.json](samples/synthetic-route.json). The 0.4.6 run reused the saved route and added
-a 90 km/h phase. Road geometry is a live response, so a new
+[synthetic-route.json](samples/synthetic-route.json). The 0.4.6 and 0.4.7 runs reused the saved route. Road geometry is a live response, so a new
 run may get a different route as OpenStreetMap changes. Use
 [selected-road-geometry.geojson](samples/selected-road-geometry.geojson) to compare with this one.
 
@@ -63,6 +62,8 @@ run may get a different route as OpenStreetMap changes. Use
 Install with `adb install -r`, and select RouteMock as the mock location app. Do not touch the
 phone during a run. Device checks here used scripted UI automation and scripts outside the
 project, so they are described but not shipped, and repeating them means rebuilding that tooling.
+The 0.4.7 reply test used a small fake dashboard, also not shipped, serving the replies listed in the
+verification report.
 
 Debug builds label consent events as test events while `files/consent-test-mode` exists:
 `adb shell run-as com.routemock.app touch files/consent-test-mode`. Remove it afterwards. Anything
@@ -72,7 +73,7 @@ done on the phone while it exists gets that label, even by a person.
 
 ```sh
 shasum -a 256 -c docs/EVIDENCE_MANIFEST.sha256
-for d in report-export report-export-correction report-export-0.4.6; do
+for d in report-export report-export-correction report-export-0.4.6 report-export-0.4.7; do
   (cd docs/samples/$d && grep -v '^#' MANIFEST.sha256 | shasum -a 256 -c)
 done
 ```

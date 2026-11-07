@@ -1,6 +1,6 @@
 # Publication audit
 
-Scope: the 206 files in the first commit, including hidden files and the final reports. These are automated text searches plus inspection of every image. A clean result
+Scope: all 212 published files, including hidden files and the final reports. These are automated text searches plus inspection of every image. A clean result
 is not proof that nothing sensitive remains, and this cannot cover caches, forks, or other copies.
 
 ## Scanners
@@ -89,7 +89,8 @@ images use synthetic records. Map images keep their attribution.
 
 - This folder is its own repository on `main`, with `origin` set to
   `https://github.com/excel16061/RouteMock.git`. The parent repository was not changed.
-- The remote had no refs before the first push, so nothing was overwritten.
-- The first commit uses the account's GitHub noreply address, so no personal email is published.
-- It carries no AI co-author trailers or tool attribution.
+- The remote had no refs before the first push, so nothing was overwritten. Pushes are never forced.
+- Commits use the account's GitHub noreply address, set in repository-local Git settings, so no
+  personal email is published.
+- They carry no AI co-author trailers or tool attribution.
 - No license has been applied.

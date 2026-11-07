@@ -1,10 +1,9 @@
 # RouteMock final handoff
 
-Current state at publication, on 2026-11-06. The check-by-check record is the
+Current state, on 2026-11-07. The check-by-check record is the
 [verification report](verification-report.md).
 
-**Status:** the source is RouteMock 0.4.7. The phone still runs 0.4.6, the last build tested on it. No
-consent is in force, and test resources are cleaned up. The dashboard is local only and not deployed.
+**Status:** RouteMock 0.4.7 is published and installed on the phone. No consent is in force, and test resources are cleaned up. The dashboard is local only and not deployed.
 No license is applied.
 
 ## Repository
@@ -12,6 +11,7 @@ No license is applied.
 | Item | State |
 | --- | --- |
 | Repository | `https://github.com/excel16061/RouteMock`, branch `main` |
+| Commit identity | Repository-local Git settings use the GitHub noreply address |
 | Parent repository | History, index, remotes, and configuration unchanged |
 | Backup | Made before the repository was created, outside the project |
 
@@ -22,12 +22,12 @@ No license is applied.
 | App source | **0.4.7**, versionCode 11 |
 | SDK levels | Compile 36, target 36, minimum 29 |
 | Debug APK SHA-256 | `e889a053efac0efd41afdd61d7cea99a641770a1b33d486a52f861f2b31adcef` |
-| Release APK SHA-256 | `df5c5c9c6eeb17e62c7de680664b15f872c0f85711dc1dbaa1d0cd3129fe9e99`, unsigned, not installed |
-| Installed on the phone | 0.4.6, versionCode 10, SHA-256 `8322e873620ac7f2234aade524c36394686e09b33a2d21705f091b79efd54ab4` |
+| Release APK SHA-256 | `ae433b709d9c50c7ff65ae3365cad680f26edd6284d478938ee7cb13ff978484`, unsigned, not installed. This hash differed between two clean builds of the same source, so release builds are not byte-reproducible here |
+| Installed on the phone | 0.4.7, same hash as the debug APK, installed with `adb install -r` |
 | Dashboard | 0.1.1, Django 6.1.3 |
 
 Version 0.4.7 adds safer handling of malformed dashboard replies, with no change to playback,
-consent, or location code. **It has not been installed on a phone.**
+consent, or location code.
 
 ## Build, test, and lint
 
@@ -52,30 +52,34 @@ network and was run separately on 0.4.6.
 
 | Kind | PASS | FAIL | NOT TESTED | Other |
 | --- | --- | --- | --- | --- |
-| Physical-device checks | 34 | 1 | 7 | 7 PASS on 0.4.6; 27 PASS and 1 FAIL historical |
+| Physical-device checks | 35 | 1 | 6 | 8 PASS on 0.4.7; 27 PASS and 1 FAIL historical |
 | Automated unit and backend tests | 388 | 0 | 0 | 1 skipped |
 | Static APK inspection | 6 | 0 | 0 | |
 | Live-provider checks | 4 | 0 | 0 | 1 on 0.4.6, 3 historical |
 
 These are not added together. The 1 FAIL is the force-stop cleanup limitation below.
 
-## Latest road playback (0.4.6)
+## Current-build device run (0.4.7)
 
 | Measurement | Result | Tolerance |
 | --- | --- | --- |
-| Fixes | 189 over 193.21 s, all mock-flagged | All flagged |
-| Worst distance from the road | 0.059 m (mean 0.022 m) | 1 m |
+| Fixes | 127 over 128.10 s, all mock-flagged | All flagged |
+| Worst distance from the road | 0.057 m (mean 0.023 m) | 1 m |
 | Turns | 5 bearing changes over 30 degrees, the largest 101.9 | 1 m |
-| 120 km/h | +0.001% over 62.72 s, then -0.001% over 35.87 s after resuming | 2% |
-| 60 km/h | 16.665 m/s, -0.008% over 43.01 s | 2% |
-| 90 km/h | 24.999 m/s, -0.002% over 33.17 s | 2% |
-| Distance against speed and moving time | 4926.6 m against 4926.7 m, over 178.20 s moving | 2% |
-| Pause | 15 fixes, one position, speed 0.0, no bearing | Exact |
-| Largest step against speed x gap | 1.005 | 1.05 |
+| 120 km/h | -0.002% over 60.76 s, then +0.001% over 37.90 s after resuming | 2% |
+| 60 km/h | 16.669 m/s, +0.013% over 11.51 s | 2% |
+| Distance against speed and moving time | 3543.0 m against 3545.5 m, over 112.12 s moving | 2% |
+| Pause | 17 fixes, one position, speed 0.0, no bearing | Exact |
+| Largest step against speed x gap | 1.004 | 1.05 |
 | Stop cleanup | 0 providers, service, wake lock, and notification | None left |
+| Malformed pairing replies | 6 refused, then a valid reply paired | No crash |
+| Malformed command replies | 9 served by Stop, while the session ran | No crash, session continues |
 
-**Live provider:** `LiveValhallaCheck` passed once on 0.4.6. It returned 4 distinct routes, the
-shortest 31.214 km, and a correct failure for points at sea.
+The app kept one process ID throughout, and the crash log gained no lines. Replies came from a fake
+dashboard over loopback HTTP. The earlier 0.4.6 measurements are kept as history in the
+[verification report](verification-report.md).
+
+**Live provider:** `LiveValhallaCheck` last ran on 0.4.6, and was not repeated on 0.4.7.
 
 ## Remaining limitations
 
@@ -83,11 +87,10 @@ shortest 31.214 km, and a correct failure for points at sea.
 
 1. Delivery to another app
 2. Low-memory process death
-3. Invalid server responses
-4. Release APK at runtime
-5. A phone restart clearing abandoned test providers
-6. Reaching the end of a road route (the longest run covered about 7.5 km of 31.21 km)
-7. Android 14 or later
+3. Release APK at runtime
+4. A phone restart clearing abandoned test providers
+5. Reaching the end of a road route (the longest run covered about 7.5 km of 31.21 km)
+6. Android 14 or later
 
 **Force-stop, as separate findings:**
 
@@ -100,8 +103,8 @@ shortest 31.214 km, and a correct failure for points at sea.
 
 - Evaluation covers one physical Android 13 phone, one played road route, one routing provider, and
   one map tile provider.
-- Most device results are historical and were not repeated on 0.4.6.
-- Version 0.4.7 has not been installed on a phone.
+- Most device results are historical and were not repeated on 0.4.7.
+- Malformed replies were tested in the listed shapes, over loopback HTTP, not over HTTPS.
 - Device-to-device transfer was not exercised.
 - Live traffic is **not configured**.
 - The dashboard is local only. The [deployment requirements](../DEPLOYMENT.md) are unresolved, and
@@ -118,10 +121,10 @@ shortest 31.214 km, and a correct failure for points at sea.
 | Mock location | `WITHDRAWN` |
 | Dashboard upload | `WITHDRAWN` |
 
-- The receipt holds 31 events and 1 correction. The last event is at 00:08:01 UTC on 2026-11-07.
+- The receipt holds 33 events and 1 correction. The last event is at 01:46:41 UTC on 2026-11-07.
 - The first 29 events and the correction are unchanged, and all 29 stay origin `UNKNOWN`.
-- The 0.4.6 run added 2 events, an acceptance of the three required scopes and its withdrawal, both
-  `AUTOMATED_TEST`. Neither is anyone's personal acceptance.
+- The 0.4.6 and 0.4.7 runs each added an acceptance and its withdrawal, all `AUTOMATED_TEST`. None is
+  anyone's personal acceptance.
 - The consent screen shows four unticked boxes.
 - The consent documents are unchanged and remain drafts pending legal review.
 
@@ -166,4 +169,3 @@ See the [publication audit](../PUBLICATION_AUDIT.md) and the
 - Your own consent acceptance, on the phone.
 - Software, documentation, and sample data licenses: see [LICENSING.md](../LICENSING.md).
 - Legal review of the consent documents.
-- Installing 0.4.7 on the phone.

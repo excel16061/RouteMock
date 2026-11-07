@@ -1,0 +1,13 @@
+check_id,title,expected,tolerance,observed,result,source,basis
+1,Mock flag preserved,Every fix flagged,All,127 of 127 flagged,PASS,automated check,independent Android observation
+2,Fixes follow the selected road,On the geometry,1 m,"Worst 0.057 m, mean 0.023 m over 127 fixes",PASS,automated check,independent Android observation
+2b,Turns,Stay on the road through turns,1 m,"5 bearing changes over 30 degrees, the largest 101.9; worst distance from road at those points 0.042 m",PASS,automated check,independent Android observation
+3a,"Speed at 120 km/h, before pause",33.333 m/s,2%,33.333 m/s over 60.76 s; error -0.002%,PASS,automated check,independent Android observation
+3b,"Speed at 120 km/h, after resume",33.333 m/s,2%,33.334 m/s over 37.90 s; error +0.001%,PASS,automated check,independent Android observation
+3c,Speed after change to 60 km/h,16.667 m/s,2%,16.669 m/s over 11.51 s; error +0.013%,PASS,automated check,independent Android observation
+3e,Distance against speed and moving time,Sum of speed x time,2%,"3543.0 m along the road against 3545.5 m expected over 112.12 s moving; error -0.07%, at the speed-change boundary",PASS,automated check,independent Android observation
+4,Paused fixes,"Speed 0, one position",Exact,"17 fixes over 15.58 s, one position, speed 0.0, no bearing",PASS,automated check,independent Android observation
+4b,No position jump,Step within speed x gap,1.05 x,Largest ratio 1.004; resume continued from the paused position,PASS,automated check,independent Android observation
+9,Stop cleanup,"No providers, service, wake lock, or notification",None left,0 of each after Stop,PASS,automated check,other
+13a,Malformed pairing replies,"Refused, no pairing, no crash",None,"6 replies refused: missing, unsafe, short, and non-text credentials, not JSON, HTTP 500. Same process throughout; a valid reply then paired",PASS,automated check,other
+13b,Malformed command replies during a session,"Ignored, no crash, session continues",None,"9 replies: wrong types, missing field, array root, not JSON, bad command, HTTP 500, 9 MiB body. Same process, no new crash log lines, session kept delivering fixes",PASS,automated check,other

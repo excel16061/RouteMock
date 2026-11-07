@@ -1,12 +1,8 @@
 # Verification report
 
-**Source: RouteMock 0.4.7. Last build tested on the phone: 0.4.6.** This is the master record of what
-was checked, how, and on which build. Evidence of different kinds is kept apart, and results from
-earlier builds are marked historical.
-
-Version 0.4.7 changes how malformed dashboard replies are handled, with no change to playback,
-consent, or location code. Its automated tests and static inspection were run, but it has **not been
-installed on a phone**, so no device result below applies to it directly.
+**Current build: RouteMock 0.4.7, installed on the phone.** This is the master record of what was
+checked, how, and on which build. Evidence of different kinds is kept apart, and results from earlier
+builds are marked historical.
 
 **Hardware:** one physical phone, a REVVL 6 Pro on Android 13. Dashboard tests with "two devices"
 used two **backend device records** in a test database, never two phones.
@@ -20,13 +16,13 @@ no revision identifier exists.
 
 | Kind | What it shows | PASS | FAIL | NOT TESTED | Other |
 | --- | --- | --- | --- | --- | --- |
-| [Physical-device checks](#physical-device-checks) | Behavior on the one real phone | 34 | 1 | 7 | |
+| [Physical-device checks](#physical-device-checks) | Behavior on the one real phone | 35 | 1 | 6 | |
 | [Automated tests](#automated-tests) | Logic on a computer, with no phone | 388 | 0 | 0 | 1 skipped |
 | [Static APK inspection](#static-apk-inspection) | What is inside the built file | 6 | 0 | 0 | |
 | [Live-provider checks](#live-provider-checks) | Responses from the real routing service | 4 | 0 | 0 | |
 
-- **Device split:** 7 PASS on 0.4.6, the last build tested on the phone. The other 27 PASS and the
-  1 FAIL are historical, from 0.4.0 to 0.4.5, and were not repeated on 0.4.6.
+- **Device split:** 8 PASS on the current 0.4.7 build. The other 27 PASS and the 1 FAIL are historical,
+  from 0.4.0 to 0.4.5, and were not repeated on 0.4.7.
 - **Live-provider split:** 1 PASS on 0.4.6, and 3 historical.
 - **The 1 FAIL** is the force-stop cleanup limitation in check D17. Android gives the app no chance
   to clean up at that moment, so the app cannot fix it, but the outcome is still not a pass.
@@ -34,49 +30,82 @@ no revision identifier exists.
 The evidence kinds are not added together, because a unit test and a phone check do not prove the
 same thing.
 
-## Latest road playback: 0.4.6
+## Current build: 0.4.7 on the phone
 
-Run on 2026-11-06 under [road-playback-2](../protocols/road-playback-2.md), with one added 90 km/h
-phase. The debug APK was SHA-256 `8322e873620ac7f2234aade524c36394686e09b33a2d21705f091b79efd54ab4`,
-and the file installed on the phone matched it. It was installed over the previous build without
-clearing data. The route was the saved synthetic route, so this run made no routing request.
+Run on 2026-11-07 from published commit `16611618fedea1d1090a6b9f51d5ee3704e6a269`. The debug APK was
+SHA-256 `e889a053efac0efd41afdd61d7cea99a641770a1b33d486a52f861f2b31adcef`, and the file installed on
+the phone matched it. It was installed over 0.4.6 with `adb install -r`, and saved routes and the
+consent receipt stayed byte-identical. The saved synthetic route was used, so no routing request was
+made.
 
-Fixes came from Android's location service, read outside the app. See the
-[observations](delivery-observations-0.4.6.csv) and [export](report-export-0.4.6/derived/report.html).
+### Road playback
 
-| Measurement | Result | Tolerance | Result |
+Protocol [road-playback-2](../protocols/road-playback-2.md). Fixes came from Android's location
+service, read outside the app. See the [observations](delivery-observations-0.4.7.csv) and
+[export](report-export-0.4.7/derived/report.html).
+
+| Measurement | Observed | Tolerance | Result |
 | --- | --- | --- | --- |
-| Fixes observed | 189 over 193.21 s, all mock-flagged | All flagged | PASS |
-| Worst distance from the road | 0.059 m (mean 0.022 m) | 1 m | PASS |
-| Turns | 5 bearing changes over 30 degrees, the largest 101.9, worst 0.059 m from the road | 1 m | PASS |
-| 120 km/h before pause | 33.334 m/s over 62.72 s, +0.001% | 2% | PASS |
-| 120 km/h after resume | 33.333 m/s over 35.87 s, -0.001% | 2% | PASS |
-| Change to 60 km/h | 16.665 m/s over 43.01 s, -0.008% | 2% | PASS |
-| Change to 90 km/h | 24.999 m/s over 33.17 s, -0.002% | 2% | PASS |
-| Distance against speed and moving time | 4926.6 m against 4926.7 m expected, over 178.20 s moving | 2% | PASS |
-| Pause | 15 fixes over 13.71 s, one position, speed 0.0, no bearing | Exact | PASS |
+| Fixes observed | 127 over 128.10 s, all mock-flagged | All flagged | PASS |
+| Worst distance from the road | 0.057 m (mean 0.023 m) | 1 m | PASS |
+| Turns | 5 bearing changes over 30 degrees, the largest 101.9, worst 0.042 m from the road | 1 m | PASS |
+| 120 km/h before pause | 33.333 m/s over 60.76 s, -0.002% | 2% | PASS |
+| 120 km/h after resume | 33.334 m/s over 37.90 s, +0.001% | 2% | PASS |
+| Change to 60 km/h | 16.669 m/s over 11.51 s, +0.013% | 2% | PASS |
+| Distance against speed and moving time | 3543.0 m against 3545.5 m expected, over 112.12 s moving, -0.07% | 2% | PASS |
+| Pause | 17 fixes over 15.58 s, one position, speed 0.0, no bearing | Exact | PASS |
 | Resume | Continued from the paused position | No jump | PASS |
-| Largest step against speed x gap | 1.005 | 1.05 | PASS |
+| Largest step against speed x gap | 1.004 | 1.05 | PASS |
 | Stop cleanup | 0 mock providers, service, RouteMock wake lock, and notification | None left | PASS |
 
-**Coverage:** this run covered the first 4.93 km of the route. It did not reach the destination.
+**Coverage:** this run covered the first 3.54 km of the route and did not reach the destination. The
+60 km/h phase lasted only 11.51 s. The 0.07% distance gap comes from the moment of the speed change;
+each constant-speed phase matches to within 0.1 m.
+
+### Dashboard replies
+
+A fake dashboard on the computer, reached over `adb reverse`, served these replies in order and logged
+only which one it sent. It never stored request bodies. The app's process ID stayed the same from
+consent to Disconnect, and the crash log gained no lines.
+
+| Reply | Served | Outcome |
+| --- | --- | --- |
+| Pairing: no credential | Yes | Refused, not paired |
+| Pairing: credential containing a line break and an injected header | Yes | Refused, not paired |
+| Pairing: credential too short | Yes | Refused, not paired |
+| Pairing: credential is a number | Yes | Refused, not paired |
+| Pairing: not JSON | Yes | Refused, not paired |
+| Pairing: HTTP 500 | Yes | Refused, not paired |
+| Pairing: valid | Yes | Paired |
+| Commands: `commands` is a number, an object, or a list of non-objects | Yes (3) | Ignored, session continued |
+| Commands: field missing, array at the root, or not JSON | Yes (3) | Ignored, session continued |
+| Commands: a command with bad fields | Yes | Ignored, no request shown |
+| Commands: HTTP 500 | Yes | Ignored, session continued |
+| Commands: 9 MiB body, over the 8 MiB limit | Yes | Abandoned, session continued |
+| Session summary: reply not JSON | Yes | Ignored |
+
+All 9 bad command replies arrived by the time of Stop, while the session ran. Reply times were not
+logged, so the first may have come just before Start. **Limits:** these replies came over loopback
+HTTP, not HTTPS, and they are the listed shapes only, not every possible bad reply.
 
 ## Physical-device checks
 
-"Latest" means run on 0.4.6. "Historical" means the result is from the build shown and was not
-repeated on 0.4.6, which differs from 0.4.5 only by backup rules and its version number.
+"Current" means run on 0.4.7. "Historical" means the result is from the build shown and was not
+repeated on 0.4.7. Since 0.4.5, the app has changed only in its backup rules and its handling of
+malformed dashboard replies.
 
-### Latest device build, 0.4.6 (7 PASS)
+### Current build, 0.4.7 (8 PASS)
 
 | # | Check | Build | Result | Evidence |
 | --- | --- | --- | --- | --- |
-| D1 | Fixes follow the road, including turns | 0.4.6 | PASS | Table above |
-| D2 | Distance against speed and moving time | 0.4.6 | PASS | Table above |
-| D3 | Pause, resume, and speed change | 0.4.6 | PASS | Table above |
-| D4 | Stop cleanup | 0.4.6 | PASS | Table above |
-| D5 | Android refuses to back up the app | 0.4.6 | PASS | `bmgr backupnow`: "Backup is not allowed". Device-to-device transfer itself was not exercised |
-| D6 | Upgrade keeps saved data | 0.4.6 | PASS | Saved routes and consent receipt byte-identical before and after install |
-| D7 | Automated consent labeled | 0.4.1, 0.4.6 | PASS | Events recorded `AUTOMATED_TEST`, subject to the label's limit below |
+| D1 | Fixes follow the road, including turns | 0.4.7 | PASS | Table above. Also passed on 0.4.0, 0.4.1, 0.4.4, and 0.4.6 |
+| D2 | Distance against speed and moving time | 0.4.7 | PASS | Table above |
+| D3 | Pause, resume, and speed change | 0.4.7 | PASS | Table above |
+| D4 | Stop cleanup | 0.4.7 | PASS | Table above |
+| D5 | Android refuses to back up the app | 0.4.7 | PASS | `bmgr backupnow`: "Backup is not allowed". Device-to-device transfer itself was not exercised |
+| D6 | Upgrade keeps saved data | 0.4.7 | PASS | Saved routes and consent receipt byte-identical before and after install |
+| D7 | Automated consent labeled | 0.4.7 | PASS | Events recorded `AUTOMATED_TEST`, subject to the label's limit below |
+| D38 | Invalid server responses | 0.4.7 | PASS | The listed replies, over loopback HTTP. See above |
 
 ### Historical (27 PASS, 1 FAIL)
 
@@ -111,20 +140,16 @@ repeated on 0.4.6, which differs from 0.4.5 only by backup rules and its version
 | D34 | Offline required withdrawal | 0.4.5 | PASS | Session stopped at once; server updated 5.0 s after reconnecting |
 | D35 | Offline Withdraw all, delivered on relaunch | 0.4.5 | PASS | Server unchanged while the app stayed closed; revoked 4.3 s after launch |
 
-### NOT TESTED (7)
+### NOT TESTED (6)
 
 | # | Check | Why |
 | --- | --- | --- |
 | D36 | Delivery to another app | Only RouteMock may be tested on this phone |
 | D37 | Low-memory process death | `adb` could not cause it: `kill` was denied, and `am kill` leaves foreground services alone |
-| D38 | Invalid server responses on a device | Unit tests only |
 | D39 | Release APK at runtime | Its signature differs from the debug build, so installing it needs an uninstall, which was ruled out |
 | D40 | Phone restart clearing abandoned test providers | No restart was performed |
 | D41 | Reaching the end of a road route | No recorded run got there. The longest covered about 7.5 km of 31.21 km. Arrival is covered by unit tests only |
 | D42 | Android 14 or later | Only Android 13 is available |
-
-Invalid server responses now have stronger handling in 0.4.7, proven by unit tests only, so D38 stays
-NOT TESTED.
 
 ## Automated tests
 
@@ -145,7 +170,6 @@ Some behavior is proven **only** here, not on a phone:
 | --- | --- |
 | Consent required at the session boundary | The service is not exported and the UI is gated, so a phone cannot reach it |
 | Dashboard refuses pairing without consent (HTTP 403) | Backend behavior. The phone's side is D24 |
-| Invalid server responses | See D38 |
 | Arrival at the end of a road route | See D41 |
 | Backup rules cover every storage domain | `BackupRulesTest` reads the rule files. D5 is the phone's side |
 
@@ -173,7 +197,7 @@ Checks against the public FOSSGIS Valhalla server, subject to its availability. 
 
 | # | Check | Build | Where | Result | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| L1 | `LiveValhallaCheck`: routes and a real failure | 0.4.6 (latest) | Computer | PASS | 4 distinct routes, shortest 31.214 km; points at sea returned "no road near pin". One run, paced requests |
+| L1 | `LiveValhallaCheck`: routes and a real failure | 0.4.6 (latest, not repeated on 0.4.7) | Computer | PASS | 4 distinct routes, shortest 31.214 km; points at sea returned "no road near pin". One run, paced requests |
 | L2 | `LiveValhallaCheck` | 0.3.0 | Computer | PASS | Historical |
 | L3 | Calculate, compare, select routes | 0.4.0 | Phone | PASS | 31.21, 36.10, 40.27, 40.53 km with labels and traffic basis |
 | L4 | Routing failure shown | 0.4.0 | Phone | PASS | "No road was found near a pin" |
@@ -193,6 +217,7 @@ finalized run stays as it was in [report-export](report-export/), and its linked
 | C5 | Road playback on the final build NOT TESTED | Closed for 0.4.6 by the run above. It was never run on 0.4.5 itself, and has not been run on 0.4.7 |
 | C6 | Road-route arrival not listed as a gap | Added as D41, after the raw logs showed that no run reached the destination |
 | C7 | Largest step ratio reported as 1.003 on 0.4.0 | Recalculating every recorded fix gives 1.006. Still within 1.05 |
+| C8 | Invalid server responses on a device NOT TESTED | Closed for the listed replies by the 0.4.7 run (D38) |
 
 ## How acceptance was handled
 
@@ -207,15 +232,46 @@ finalized run stays as it was in [report-export](report-export/), and its linked
   original records are unchanged. All 29 stay origin unknown.
 - **The 0.4.6 run** added 2 events, an acceptance of the three required scopes and its withdrawal,
   both `AUTOMATED_TEST`. The receipt count matched what the script expected at each step.
-- **Current state:** 31 events, all four scopes `WITHDRAWN`, no consent in force.
+- **The 0.4.7 run** added 2 more, an acceptance of all four scopes and its withdrawal, both
+  `AUTOMATED_TEST`. All earlier events and the correction stayed unchanged.
+- **Current state:** 33 events, all four scopes `WITHDRAWN`, no consent in force.
 
 **Disclosure:** the 0.4.0 run used a temporary low-level touch monitor, which recorded touch
 times. One earlier 8-second diagnostic also read touch positions. This should not have been
 collected. All of it is deleted, nothing is running, and the current protocol collects none.
-Phases then seen to be disturbed were discarded. Later checks, including 0.4.6, ran with no
+Phases then seen to be disturbed were discarded. Later checks, including 0.4.7, ran with no
 monitoring, so they rest on RouteMock's state and Android's records alone.
 
 ## Historical measurements
+
+### Road playback on 0.4.6
+
+Run on 2026-11-06 under [road-playback-2](../protocols/road-playback-2.md), with one added 90 km/h
+phase. The debug APK was SHA-256 `8322e873620ac7f2234aade524c36394686e09b33a2d21705f091b79efd54ab4`,
+and the file installed on the phone matched it. It was installed over the previous build without
+clearing data. The route was the saved synthetic route, so this run made no routing request.
+
+Fixes came from Android's location service, read outside the app. See the
+[observations](delivery-observations-0.4.6.csv) and [export](report-export-0.4.6/derived/report.html).
+
+| Measurement | Result | Tolerance | Result |
+| --- | --- | --- | --- |
+| Fixes observed | 189 over 193.21 s, all mock-flagged | All flagged | PASS |
+| Worst distance from the road | 0.059 m (mean 0.022 m) | 1 m | PASS |
+| Turns | 5 bearing changes over 30 degrees, the largest 101.9, worst 0.059 m from the road | 1 m | PASS |
+| 120 km/h before pause | 33.334 m/s over 62.72 s, +0.001% | 2% | PASS |
+| 120 km/h after resume | 33.333 m/s over 35.87 s, -0.001% | 2% | PASS |
+| Change to 60 km/h | 16.665 m/s over 43.01 s, -0.008% | 2% | PASS |
+| Change to 90 km/h | 24.999 m/s over 33.17 s, -0.002% | 2% | PASS |
+| Distance against speed and moving time | 4926.6 m against 4926.7 m expected, over 178.20 s moving | 2% | PASS |
+| Pause | 15 fixes over 13.71 s, one position, speed 0.0, no bearing | Exact | PASS |
+| Resume | Continued from the paused position | No jump | PASS |
+| Largest step against speed x gap | 1.005 | 1.05 | PASS |
+| Stop cleanup | 0 mock providers, service, RouteMock wake lock, and notification | None left | PASS |
+
+**Coverage:** this run covered the first 4.93 km of the route. It did not reach the destination.
+
+### Earlier builds
 
 From fixes recorded by Android's location service. All carried the mock flag. These are earlier
 results, kept as observed.

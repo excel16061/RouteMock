@@ -6,7 +6,7 @@ had no independent audit. "Tested" means an automated test in this repository co
 | Threat | Mitigations | Tested | Remaining risk |
 | --- | --- | --- | --- |
 | Data copied off the phone by backup or transfer | `allowBackup=false`, every storage domain excluded for backup and device transfer, device credential sealed by a Keystore key | Yes | Device-to-device transfer was not exercised on a phone. Rooted devices and `run-as` on debug builds are out of scope. |
-| Malformed reply from a dashboard | Replies are checked, credentials must match a format, and failures never end the process | Yes | Not exercised on a phone. |
+| Malformed reply from a dashboard | Replies are checked, credentials must match a format, and failures never end the process | Yes, and on the phone | Listed reply shapes only, over loopback HTTP. |
 | Stolen password | Second factor is mandatory, Argon2id storage, 15-character minimum, common-password check | Yes | Phishing can capture a code, as TOTP is not phishing-resistant. Passkeys are not implemented. |
 | Password guessing | Lockout per username and address, one generic error | Yes | Spread-out guessing from many addresses is limited only by the second factor. |
 | Compromised session | HttpOnly, SameSite=Strict, 8-hour limit, rotation at login, server-side logout, sign out everywhere, reauthentication for sensitive changes | Yes | Malware on the administrator's computer is out of scope. Secure cookies depend on deployment. |

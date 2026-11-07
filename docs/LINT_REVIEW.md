@@ -44,7 +44,7 @@ setting `allowBackup` to true, removing a device-transfer exclusion, and removin
 exclusion. Gradle did not rerun the test when only these XML files changed, so they are now declared
 as test inputs.
 
-**On the phone:** `bmgr backupnow` on 0.4.6 returned "Backup is not allowed". Device-to-device
+**On the phone:** `bmgr backupnow` on 0.4.6 and 0.4.7 returned "Backup is not allowed". Device-to-device
 transfer needs a second phone and was **not tested**.
 
 ## OldTargetApi
