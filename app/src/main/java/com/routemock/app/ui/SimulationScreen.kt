@@ -269,7 +269,7 @@ private fun SessionEndNotice(end: SessionEnd, onDismiss: () -> Unit) {
         is SessionEnd.Interrupted -> Triple(
             NoticeTone.WARNING,
             stringResource(R.string.end_interrupted),
-            if (end.cleanupComplete) restore else leftover,
+            if (end.cleanupComplete) stringResource(R.string.end_interrupted_cleaned) else leftover,
         )
     }
     Notice(tone, title, body = body) {

@@ -96,6 +96,7 @@ none exist.
 - **The pairing limit is per process** and resets on restart.
 - **The server trusts a consent receipt** from a valid pairing. It cannot prove a person decided.
 - **Uploads are not malware-scanned.** Treat downloads as untrusted.
-- **After a force-stop**, test providers stay until RouteMock is reopened.
+- **After a force-stop**, test providers stay until RouteMock is reopened, and a stale mock fix
+  stays readable as last known. Reopening removes them (phone and Android 14 emulator).
 
 See [THREAT_MODEL.md](THREAT_MODEL.md) and [DASHBOARD_LIMITATIONS.md](DASHBOARD_LIMITATIONS.md).

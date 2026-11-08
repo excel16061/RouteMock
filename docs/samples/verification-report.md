@@ -1,6 +1,7 @@
 # Verification report
 
-**Current build: RouteMock 0.4.7, installed on the phone.** This is the master record of what was
+**Phone build: RouteMock 0.4.7. Source version: 0.4.8**, which changes only the force-stop recovery
+notice and was run on the Android 14 emulator, not the phone. This is the master record of what was
 checked, how, and on which build. Evidence of different kinds is kept apart, and results from earlier
 builds are marked historical.
 
@@ -17,16 +18,18 @@ no revision identifier exists.
 | Kind | What it shows | PASS | FAIL | NOT TESTED | Other |
 | --- | --- | --- | --- | --- | --- |
 | [Physical-device checks](#physical-device-checks) | Behavior on the one real phone | 37 | 1 | 4 | |
-| [Automated tests](#automated-tests) | Logic on a computer, with no phone | 388 | 0 | 0 | 1 skipped |
+| [Automated tests](#automated-tests) | Logic on a computer, with no phone | 390 | 0 | 0 | 1 skipped |
 | [Static APK inspection](#static-apk-inspection) | What is inside the built file | 6 | 0 | 0 | |
 | [Live-provider checks](#live-provider-checks) | Responses from the real routing service | 6 | 0 | 0 | |
-| [Emulator checks](#emulator-evidence-android-14) | Behavior on an Android 14 emulator, not a phone | 9 | 0 | 0 | |
+| [Emulator checks](#emulator-evidence-android-14) | Behavior on an Android 14 emulator, not a phone | 16 | 1 | 0 | |
 
 - **Device split:** 10 PASS on the current 0.4.7 build. The other 27 PASS and the 1 FAIL are historical,
   from 0.4.0 to 0.4.5, and were not repeated on 0.4.7.
 - **Live-provider split:** 2 PASS on 0.4.7, and 4 historical.
 - **The 1 FAIL** is the force-stop cleanup limitation in check D17. Android gives the app no chance
   to clean up at that moment, so the app cannot fix it, but the outcome is still not a pass.
+- **The emulator FAIL** is the same limitation reproduced on Android 14 (E11). It is emulator
+  evidence and does not replace or add to D17.
 
 The evidence kinds are not added together, because a unit test and a phone check do not prove the
 same thing.
@@ -215,11 +218,49 @@ location records, read outside the app.
 **Limits:** one emulator image, one run, with software rendering. The test automation answered the
 notification prompt. Swiping away the notification, which Android 14 allows, was not tried.
 
+### Force-stop on the emulator
+
+Run `99b2b8af-40cb-45cc-a3da-df84098bdeff` on 2026-11-07 (local time), on the same emulator with the saved `RM-emulator-test`
+route at 30 km/h. Force-stop and relaunch ran on 0.4.7 (`e889a053...`), and then again on 0.4.8
+(`78612dcb...`), installed over it with data kept. The 0.4.8 change was uncommitted when it ran,
+on top of `eb4ab1c`, and is published in the same commit as these results. Android's location
+service was read outside the app, and the separately built observer (`8417d01d...`) was
+installed on the emulator for this run and removed afterwards. See the
+[observations](forcestop-observations-emulator-api34.csv),
+[report](report-export-emulator-forcestop/derived/report.html), and
+[recovery notes](../FORCE_STOP_RECOVERY.md).
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| E10 | Force-stop: simulation does not restart by itself | PASS | No process, service, notification, or wake lock for 127 s on 0.4.7 and 67 s on 0.4.8 |
+| E11 | **Force-stop: test providers removed without reopening the app** | **FAIL (known limitation)** | 3 providers stayed for the whole time watched. Last known stayed the final mock fix, flagged as mock and still showing 8.333 m/s; the observer app read it 6 times |
+| E12 | Force-stop: no fresh mock fixes | PASS | Newest fix 0.9 s before force-stop, and none newer. Observer callbacks stayed at 39 for 127 s |
+| E13 | Reopening RouteMock removes the providers | PASS | All 3 removed about 1.1 s after the launch command, on both builds. Last known was cleared, and a new observer session saw 0 mock fixes and real fixes again |
+| E14 | Playback stays stopped after reopening | PASS | No service, notification, or provider for 139 s (0.4.7) and 51 s (0.4.8). Start was refused until the saved route was loaded again, because the draft is not kept |
+| E15 | Normal Stop, for comparison | PASS | 0 providers by the first sample 7 s after Stop in the notification; last known not mock-flagged; 0 new mock fixes and 57 real fixes in 60 s |
+| E16 | Recovery notice seen on reopening (0.4.8) | PASS | 0.4.8 opened straight on Simulation with the notice. 0.4.7 opened on Map, with the notice only on the Simulation tab |
+| E17 | Consent withdrawal | PASS | Every scope `WITHDRAWN`; test marker removed |
+
+**Force-stop and normal Stop, side by side:**
+
+| | Normal Stop | Force-stop |
+| --- | --- | --- |
+| Test providers | Removed at once | Stayed until RouteMock was opened |
+| New mock fixes | None | None |
+| Last known location | Real again within seconds | Stale mock fix, frozen with a moving speed |
+| Notification | Removed | Removed by Android, so nothing shows the providers remain |
+| After reopening RouteMock | Nothing to do | Providers removed and last known cleared, about 1.1 s after launch |
+
+**Also found:** the previous emulator shutdown (`emu kill`) did not keep two late changes: the
+mock-app selection and the deletion of the test marker. Both were redone, and this run ended with a
+clean power-off instead. The sampling took time, so the first reading after force-stop was at 10 s,
+not 3 s; the table gives the real times.
+
 ## Physical-device checks
 
 "Current" means run on 0.4.7. "Historical" means the result is from the build shown and was not
 repeated on 0.4.7. Since 0.4.5, the app has changed only in its backup rules and its handling of
-malformed dashboard replies.
+malformed dashboard replies, and in 0.4.8 its force-stop recovery notice, which is not on the phone.
 
 ### Current build, 0.4.7 (10 PASS)
 
@@ -280,16 +321,16 @@ malformed dashboard replies.
 
 ## Automated tests
 
-These ran on a computer, with no phone. Final run on 0.4.7:
+These ran on a computer, with no phone. Final run on 0.4.8 (dashboard unchanged since 0.4.7):
 
 | Suite | Total | Passed | Failed | Errors | Skipped |
 | --- | --- | --- | --- | --- | --- |
-| Android unit tests | 298 | 297 | 0 | 0 | 1 |
+| Android unit tests | 300 | 299 | 0 | 0 | 1 |
 | Dashboard backend tests | 91 | 91 | 0 | 0 | 0 |
-| **Together** | **389** | **388** | **0** | **0** | **1** |
+| **Together** | **391** | **390** | **0** | **0** | **1** |
 
 The location observer tool has its own 12 unit tests, all passing, counted separately from the totals
-above. They cover the tool, not delivery. No emulator was available, so there is no emulator evidence.
+above. They cover the tool, not delivery. Emulator results are in their own section.
 
 The skipped test is `LiveValhallaCheck`, which needs a network and is counted under
 [live-provider checks](#live-provider-checks) when run on request.
@@ -443,7 +484,9 @@ until the operator revokes it, and queued commands expire within 5 minutes.
 1. **Mocking changed the phone's time zone.** With automatic time zone on, Android moved to
    Europe/Berlin during earlier testing. After one stop it stayed changed for several minutes, then
    returned by itself. The Terms warn about this.
-2. **Force-stop leaves test providers registered** until the app is reopened. See D17.
+2. **Force-stop leaves test providers registered** until the app is reopened. See D17, and E11 for
+   the same result on an Android 14 emulator. Until then, apps can read a stale mock fix as last known.
+   From 0.4.8, reopening lands on the recovery notice.
 3. **The Simulated and Delivered markers overlap**, so one label can hide the other.
 4. **Re-pairing bug, fixed:** see D28.
 5. **A leftover test artifact:** the crash test left a system error window that lingered until

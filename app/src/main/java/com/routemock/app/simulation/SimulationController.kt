@@ -203,3 +203,7 @@ class SimulationController(
         const val CONSENT_REQUIRED = "Mock location consent is required"
     }
 }
+
+/** True when the last session ended without Stop, so the app should open on its recovery notice. */
+fun opensOnSimulation(state: SimulationState): Boolean =
+    (state as? SimulationState.Idle)?.lastEnd is SessionEnd.Interrupted

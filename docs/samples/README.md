@@ -24,6 +24,8 @@ Nothing here records a real journey. Do not read these files as travel.
 | `report-export-observer-delivery-1/` | The finalized observer run | Real measurements |
 | `delivery-observations-emulator-api34.csv` | Fixes from the Android 14 emulator run | Emulator observation, not a physical device |
 | `report-export-emulator-api34/` | The finalized emulator run | Emulator measurements |
+| `forcestop-observations-emulator-api34.csv` | Provider, last-known, process, and observer counts around force-stop, relaunch, and normal Stop. No coordinates | Emulator observation, not a physical device |
+| `report-export-emulator-forcestop/` | The finalized emulator force-stop run | Emulator measurements |
 
 **Categories used across the project:**
 

@@ -27,6 +27,7 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.routemock.app.R
 import com.routemock.app.RouteMockApp
+import com.routemock.app.simulation.opensOnSimulation
 
 private enum class Section(@param:StringRes val label: Int, @param:DrawableRes val icon: Int) {
     MAP(R.string.section_map, R.drawable.ic_map),
@@ -48,7 +49,10 @@ fun RouteMockRoot(viewModel: RouteMockViewModel) {
 
 @Composable
 private fun MainContent(viewModel: RouteMockViewModel) {
-    var section by rememberSaveable { mutableStateOf(Section.MAP) }
+    // After a force-stop or crash, open where the recovery notice is shown.
+    var section by rememberSaveable {
+        mutableStateOf(if (opensOnSimulation(viewModel.simulation.value)) Section.SIMULATION else Section.MAP)
+    }
 
     // The user may have changed settings in another app while we were away.
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refreshReadiness() }

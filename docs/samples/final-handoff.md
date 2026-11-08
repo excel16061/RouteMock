@@ -3,7 +3,7 @@
 Current state, on 2026-11-07, after protocols road-arrival-1 and observer-delivery-1. The check-by-check record is the
 [verification report](verification-report.md).
 
-**Status:** RouteMock 0.4.7 is published and installed on the phone. No consent is in force, and test resources are cleaned up. The dashboard is local only and not deployed.
+**Status:** RouteMock 0.4.8 is published in source; the phone still runs 0.4.7. 0.4.8 changes only the force-stop recovery notice and has run on the Android 14 emulator only. No consent is in force, and test resources are cleaned up. The dashboard is local only and not deployed.
 No license is applied.
 
 ## Repository
@@ -19,25 +19,26 @@ No license is applied.
 
 | Item | Value |
 | --- | --- |
-| App source | **0.4.7**, versionCode 11 |
+| App source | **0.4.8**, versionCode 12 |
 | SDK levels | Compile 36, target 36, minimum 29 |
-| Debug APK SHA-256 | `e889a053efac0efd41afdd61d7cea99a641770a1b33d486a52f861f2b31adcef` |
-| Release APK SHA-256 | `7b1028103dfd49f30db260445d8bf5a008b06e9fb4c773650a3478460d4b3ba0`, unsigned, not installed. This hash differs between clean builds of the same source, so release builds are not byte-reproducible here |
+| Debug APK SHA-256 | 0.4.8: `78612dcb9c7c218af7808638aa3a1eaae8d89a4a0897a0b35e14fea531301554`, the same file run on the emulator. 0.4.7 on the phone: `e889a053efac0efd41afdd61d7cea99a641770a1b33d486a52f861f2b31adcef` |
+| Release APK SHA-256 | 0.4.8: `b77d98358a6e5df4ff03a0069d4376f0143e1824e50375f186c98c6080716ad5`, unsigned, not installed. This hash differs between clean builds of the same source, so release builds are not byte-reproducible here |
 | Installed on the phone | 0.4.7, same hash as the debug APK, installed with `adb install -r` |
 | Dashboard | 0.1.1, Django 6.1.3 |
 
-Version 0.4.7 adds safer handling of malformed dashboard replies, with no change to playback,
-consent, or location code.
+Version 0.4.8 opens on the Simulation tab after a force-stop or crash, with a clearer notice that
+the left-over test providers were removed. Version 0.4.7 added safer handling of malformed dashboard
+replies. Neither changed playback, consent, or location code.
 
 ## Build, test, and lint
 
-Run from clean on 0.4.7, with every task forced and no build cache.
+Run from clean on 0.4.8, with every task forced and no build cache.
 
 | Check | Result |
 | --- | --- |
 | Gradle | BUILD SUCCESSFUL, 103 of 103 tasks executed |
 | Debug and release builds | Both successful |
-| Android unit tests | 298 total, 297 passed, 0 failed, 0 errors, 1 skipped |
+| Android unit tests | 300 total, 299 passed, 0 failed, 0 errors, 1 skipped |
 | Dashboard backend tests | 91 total, 91 passed, 0 failed, 0 skipped |
 | Android lint | 0 errors, 8 warnings |
 | Django system check | No issues |
@@ -53,10 +54,10 @@ network and was run separately on 0.4.6.
 | Kind | PASS | FAIL | NOT TESTED | Other |
 | --- | --- | --- | --- | --- |
 | Physical-device checks | 37 | 1 | 4 | 10 PASS on 0.4.7; 27 PASS and 1 FAIL historical |
-| Automated unit and backend tests | 388 | 0 | 0 | 1 skipped |
+| Automated unit and backend tests | 390 | 0 | 0 | 1 skipped |
 | Static APK inspection | 6 | 0 | 0 | |
 | Live-provider checks | 6 | 0 | 0 | 2 on 0.4.7, 4 historical |
-| Emulator checks | 9 | 0 | 0 | Android 14 emulator; not a physical device |
+| Emulator checks | 16 | 1 | 0 | Android 14 emulator; not a physical device. The FAIL is the force-stop limitation |
 
 These are not added together. The 1 FAIL is the force-stop cleanup limitation below.
 
@@ -117,8 +118,8 @@ worst distance from the road 0.055 m, and speed error +0.000%.
 1. Low-memory process death
 2. Release APK at runtime
 3. A phone restart clearing abandoned test providers
-4. Android 14 or later on a physical phone. An Android 14 (API 34) emulator passed all nine of its checks,
-   recorded separately as emulator evidence
+4. Android 14 or later on a physical phone. An Android 14 (API 34) emulator passed its compatibility
+   checks, recorded separately as emulator evidence
 
 **Force-stop, as separate findings:**
 
@@ -126,6 +127,9 @@ worst distance from the road 0.055 m, and speed error +0.000%.
 - Test providers removed without reopening the app: **FAIL, a known limitation.** They stay until
   RouteMock is reopened, and a stale mock position stays available as last known location.
 - Reopening RouteMock removes them: PASS.
+- On an Android 14 emulator, the same three results, plus no fresh mock fixes after force-stop and
+  playback staying stopped after reopening. Emulator evidence only. Normal Stop removed the providers
+  at once. 0.4.8 now opens on the recovery notice. See [FORCE_STOP_RECOVERY.md](../FORCE_STOP_RECOVERY.md).
 
 **Also:**
 

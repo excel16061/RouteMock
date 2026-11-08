@@ -145,7 +145,8 @@ Withdrawing takes effect on the phone at once. If it is offline, the server lear
 runs with a connection, and until then it still shows the old state. The phone ignores requests
 meanwhile. See [CONSENT_SCOPES.md](CONSENT_SCOPES.md).
 
-**After a force-stop**, open RouteMock. Test providers stay registered until you do. See
+**After a force-stop**, or if the notification disappears without Stop, open RouteMock. Test
+providers stay registered until you do, and apps can read a stale simulated position. See
 [FORCE_STOP_RECOVERY.md](FORCE_STOP_RECOVERY.md).
 
 ## 10. Password, MFA, and sessions

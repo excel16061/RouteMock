@@ -16,7 +16,7 @@ locations as mock.
 **Evaluation scope:** one physical Android 13 phone, three played road routes, one routing provider,
 and one map tile provider. See [Verification](#verification).
 
-**Status:** version 0.4.7. Live traffic is **not configured**, and place-name search is not
+**Status:** version 0.4.8 in source; the test phone runs 0.4.7. Live traffic is **not configured**, and place-name search is not
 implemented. The dashboard has only run locally and **is not ready to deploy**. No license has been
 chosen yet, so all rights are reserved for now, and the consent documents are drafts pending legal
 review.
@@ -485,11 +485,13 @@ and tells you what went wrong.
 GPS or the network, which can take a while, especially indoors. Until then, apps may
 show the last simulated position.
 
-If the process is killed mid-session, RouteMock does **not** restart simulation. The
-service is not sticky. A journal on disk records that providers may exist, so the
-next time you open RouteMock it removes them and tells you what happened. Until you
-reopen it, a test provider left by the killed process may remain. If location seems
-stuck, reopen RouteMock or restart the phone.
+If the process is killed mid-session, for example by force-stop, RouteMock does **not**
+restart simulation. The service is not sticky. Android also removes the notification, so
+nothing shows that the test providers are still registered. **If the notification disappears
+without you pressing Stop, open RouteMock.** A journal on disk records that providers may
+exist, so RouteMock removes them as it starts and opens on a notice saying so. Until you
+reopen it, apps can still read the last simulated position, frozen. If RouteMock cannot be
+opened, restart the phone (not tested).
 
 ## Limitations
 
@@ -498,7 +500,8 @@ stuck, reopen RouteMock or restart the phone.
   real location. This was observed on the test phone.
 - **After a force-stop, test providers stay registered** until RouteMock is reopened. No new
   mock fixes are produced, but the last known position stays a stale simulated one. Android gives
-  the app no chance to clean up. Opening RouteMock fixes it. See
+  the app no chance to clean up. Opening RouteMock fixes it. This was seen on the phone (Android 13)
+  and again on an Android 14 emulator. See
   [recovery notes](docs/FORCE_STOP_RECOVERY.md).
 - **Evaluation is narrow:** one phone, three played routes, and one routing provider. Arrival was
   observed on two short routes, delivery was shown to one test app, and most device results predate
@@ -543,20 +546,22 @@ stuck, reopen RouteMock or restart the phone.
 
 ## Verification
 
-Evidence is kept in four separate kinds, which are not added together. The
+Evidence is kept in five separate kinds, which are not added together. The
 [verification report](docs/samples/verification-report.md) has every check and its build.
 
 | Kind | PASS | FAIL | NOT TESTED | Notes |
 | --- | --- | --- | --- | --- |
 | Physical-device checks | 37 | 1 | 4 | One REVVL 6 Pro on Android 13. 10 PASS on 0.4.7; the rest are from 0.4.0 to 0.4.5 |
-| Automated tests | 388 | 0 | | 297 Android and 91 dashboard; 1 opt-in network test skipped |
+| Automated tests | 390 | 0 | | 299 Android and 91 dashboard, on 0.4.8; 1 opt-in network test skipped |
 | Static APK inspection | 6 | 0 | | Release APK read without running it |
 | Live-provider checks | 6 | 0 | | Public Valhalla server. 2 on 0.4.7; 4 historical |
-| Emulator checks | 9 | 0 | | Android 14 emulator, API 34. Not a physical device, and not counted above |
+| Emulator checks | 16 | 1 | | Android 14 emulator, API 34: compatibility and force-stop. Not a physical device, and not counted above |
 
 **The one FAIL** is a known limitation: after a force-stop, test providers stay registered until
 RouteMock is reopened, and the last known position stays a stale simulated one. The simulation itself
-does not restart. See the [recovery notes](docs/FORCE_STOP_RECOVERY.md).
+does not restart. The emulator FAIL is the same limitation reproduced on Android 14, where reopening
+RouteMock removed the providers about 1.1 s after launch. See the
+[recovery notes](docs/FORCE_STOP_RECOVERY.md).
 
 **Road playback on 0.4.7:** 127 fixes observed through Android's own records, all mock-flagged. The
 worst distance from the road was 0.057 m, through 5 sharp turns. Speed stayed within 0.013% of the
@@ -608,7 +613,7 @@ source ./env.sh
 shasum -a 256 -c docs/EVIDENCE_MANIFEST.sha256
 ```
 
-Expect Android 298 tests with 297 passed and 1 skipped, lint with 0 errors and 8 warnings, and
+Expect Android 300 tests with 299 passed and 1 skipped, lint with 0 errors and 8 warnings, and
 dashboard 91 passed. [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md) has the full steps.
 
 ## License status
@@ -693,7 +698,7 @@ Use a separate GPS-reading app to observe results, or run
 - [ ] After Stop, `dumpsys location` shows no test providers and real location eventually returns.
 - [ ] Deselecting RouteMock mid-session stops it with a clear error.
 - [ ] After `adb shell am force-stop com.routemock.app`, simulation does not restart by
-      itself, and reopening the app reports the interruption and cleans up.
+      itself, and reopening the app opens on the interruption notice and cleans up.
 
 **Saved routes**
 

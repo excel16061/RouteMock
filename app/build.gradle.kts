@@ -27,8 +27,8 @@ android {
         applicationId = "com.routemock.app"
         minSdk = 29 // Android 10; the test phone runs Android 13 (API 33).
         targetSdk = 36
-        versionCode = 11
-        versionName = "0.4.7"
+        versionCode = 12
+        versionName = "0.4.8"
 
         buildConfigField(
             "String",

@@ -1,0 +1,137 @@
+{
+  "schema": "routemock-run/1",
+  "run_id": "99b2b8af-40cb-45cc-a3da-df84098bdeff",
+  "state": "final",
+  "corrects": null,
+  "title": "Force-stop cleanup on an Android 14 emulator",
+  "protocol_version": "emulator-forcestop",
+  "versions": {
+    "app": "0.4.7 and 0.4.8",
+    "backend": "0.1.1"
+  },
+  "source_revision": "eb4ab1c",
+  "working_tree_dirty": true,
+  "route_fixture": "Saved route RM-emulator-test: the road-arrival-1 geometry, 1319.29 m",
+  "selected_speed_kmh": 30.0,
+  "configuration": {
+    "target_type": "emulator",
+    "avd": "routemock-api34",
+    "system_image": "system-images;android-34;google_apis;arm64-v8a, revision 14",
+    "emulator_version": "37.2.13",
+    "android_release": "14",
+    "api_level": 34,
+    "build_id": "UE1A.230829.050",
+    "build_type": "userdebug",
+    "security_patch": "2023-09-05",
+    "routemock_0_4_7_apk_sha256": "e889a053efac0efd41afdd61d7cea99a641770a1b33d486a52f861f2b31adcef",
+    "routemock_0_4_8_apk_sha256": "78612dcb9c7c218af7808638aa3a1eaae8d89a4a0897a0b35e14fea531301554",
+    "observer_apk_sha256": "8417d01db18936af655a4bd0c1aae80695f50b192dc4cfa8d631edac63b9f4d3",
+    "force_stop_command": "am force-stop com.routemock.app",
+    "relaunch": "launcher intent"
+  },
+  "device": {
+    "model": "Android Emulator (sdk_gphone64_arm64)",
+    "android_version": "14"
+  },
+  "started_at_utc": "2026-11-08T02:51:55+00:00",
+  "finished_at_utc": "2026-11-08T03:11:48+00:00",
+  "monotonic_duration_s": null,
+  "limitations": "Emulator evidence only: not a physical device. It does not change physical check D17, which stays a historical FAIL, or close D42. One emulator image, one route. Providers were watched for 127 s after force-stop on 0.4.7 and 67 s on 0.4.8; longer periods and a restart were not tested. The 0.4.8 changes were uncommitted when they ran and are included in the commit that publishes this export.",
+  "deviations": "Mock-app selection had not persisted across the previous emulator shutdown and was redone in Settings. The observer app was installed on the emulator for this run and removed afterwards. Its location permission was granted through its own prompt by the test automation. Its post-relaunch counts from the first session are not used, because it ends observation when it leaves the screen. The first normal-Stop attempt was refused because the draft route is not kept across a restart; the saved route was reloaded.",
+  "counts": {
+    "PASS": 7,
+    "FAIL": 1,
+    "NOT TESTED": 0,
+    "INCONCLUSIVE": 0
+  },
+  "checks": [
+    {
+      "check_id": "E10",
+      "title": "Force-stop: simulation does not restart by itself",
+      "expected": "No process, service, or notification",
+      "tolerance": "None",
+      "observed": "No process, foreground service, notification, or wake lock for 127 s (0.4.7) and 67 s (0.4.8)",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    },
+    {
+      "check_id": "E11",
+      "title": "Force-stop: test providers removed without reopening the app",
+      "expected": "Providers removed and no stale mock fix offered",
+      "tolerance": "None",
+      "observed": "3 providers stayed for 127 s (0.4.7) and 67 s (0.4.8). Last known on gps, fused, and network stayed the final mock fix, flagged as mock and showing 8.333 m/s; the observer read it 6 times. Android gives no callback at force-stop, so this is the known limitation",
+      "result": "FAIL",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "E12",
+      "title": "Force-stop: no fresh mock fixes",
+      "expected": "No fix newer than the force-stop",
+      "tolerance": "None",
+      "observed": "Newest mock fix 0.9 s before force-stop; none newer in Android records; observer mock callbacks stayed at 39 for 127 s, and at 34 for 67 s on 0.4.8",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "E13",
+      "title": "Reopening RouteMock removes the providers",
+      "expected": "Providers removed on launch",
+      "tolerance": "None",
+      "observed": "All 3 removed about 1.1 s after the launch command, on 0.4.7 and 0.4.8; last known cleared to none; a new observer session saw 0 mock callbacks and real fixes again",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "E14",
+      "title": "Playback stays stopped after reopening",
+      "expected": "No service or new mock fixes",
+      "tolerance": "None",
+      "observed": "No service, notification, or provider for 139 s (0.4.7) and 51 s (0.4.8). A later Start was refused until the saved route was loaded again",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    },
+    {
+      "check_id": "E15",
+      "title": "Normal Stop, for comparison",
+      "expected": "Providers removed at Stop",
+      "tolerance": "None",
+      "observed": "0 providers by the first sample 7 s after notification Stop; last known not mock-flagged; 0 new mock callbacks and 57 real fixes in 60 s",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "independent Android observation"
+    },
+    {
+      "check_id": "E16",
+      "title": "Recovery notice seen on reopening (0.4.8)",
+      "expected": "Notice shown where the app opens",
+      "tolerance": "None",
+      "observed": "0.4.8 opened on Simulation with the notice that the simulation ended without Stop and the providers were removed. On 0.4.7 it opened on Map, with the notice only on Simulation",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    },
+    {
+      "check_id": "E17",
+      "title": "Consent withdrawal",
+      "expected": "No consent in force",
+      "tolerance": "None",
+      "observed": "Withdraw all left every scope WITHDRAWN and four unticked boxes; test marker removed",
+      "result": "PASS",
+      "source": "automated check",
+      "basis": "other"
+    }
+  ],
+  "evidence": [
+    {
+      "name": "forcestop-observations-emulator-api34.csv",
+      "kind": "raw",
+      "sha256": "c155f3c5f5a509991fdbef7da08f7a0a92f0bb385b8e0896f6e1712d71591519",
+      "size": 4818
+    }
+  ]
+}

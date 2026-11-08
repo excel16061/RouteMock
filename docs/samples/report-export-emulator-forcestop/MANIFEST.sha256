@@ -1,0 +1,6 @@
+# SHA-256 manifest. Hashes detect changes relative to a manifest you already trust.
+# They do not prove that any observation is true.
+20781e08864cae727e8a7a8cf0f139e0e4e70a71b6578ddcd3065f4af732c7d5  derived/checks.csv
+34f05b0a23b7e55ff367de9676927a5fc512a5f20039dff9df818128566b2a77  derived/report.html
+13bbd2a8f41b24da30f5a91c7db0140437590499498a0bd8c422f48ca84dd4ae  derived/run.json
+c155f3c5f5a509991fdbef7da08f7a0a92f0bb385b8e0896f6e1712d71591519  raw/forcestop-observations-emulator-api34.csv

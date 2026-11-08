@@ -1,7 +1,8 @@
 # Final report
 
-Milestone state: RouteMock 0.4.7 and dashboard 0.1.1. The dashboard is not deployed, and no license
-is selected. 0.4.7 is installed on the phone. The check-by-check record is the
+Milestone state: RouteMock 0.4.8 in source and dashboard 0.1.1. The dashboard is not deployed, and no
+license is selected. 0.4.7 is installed on the phone. 0.4.8 changes only the force-stop recovery
+notice and has run on the Android 14 emulator only. The check-by-check record is the
 [verification report](samples/verification-report.md), and current status is in the
 [handoff](samples/final-handoff.md).
 
@@ -10,25 +11,26 @@ is selected. 0.4.7 is installed on the phone. The check-by-check record is the
 | Kind | What it shows | PASS | FAIL | NOT TESTED | Skipped |
 | --- | --- | --- | --- | --- | --- |
 | Physical-device checks | Behavior on one real phone | 37 | 1 | 4 | |
-| Automated tests | Logic on a computer, with no phone | 388 | 0 | | 1 |
+| Automated tests | Logic on a computer, with no phone | 390 | 0 | | 1 |
 | Static APK inspection | What is inside the built file | 6 | 0 | | |
 | Live-provider checks | Responses from the real routing service | 6 | 0 | | |
-| Emulator checks | Android 14 emulator, not a phone | 9 | 0 | | |
+| Emulator checks | Android 14 emulator, not a phone | 16 | 1 | | |
 
 - **Device checks:** 10 PASS are current, on 0.4.7. The other 27 PASS and the 1 FAIL are historical,
   from 0.4.0 to 0.4.5.
 - **The 1 FAIL** is a known limitation: after a force-stop, test providers stay registered until
   RouteMock is reopened.
+- **The emulator FAIL** is the same limitation, reproduced on Android 14. It is emulator evidence.
 - **Live-provider checks:** 2 PASS on 0.4.7, and 4 historical.
 - These kinds of evidence are not added together.
 
 ## Build, test, and lint
 
-Run from clean on 0.4.7, with every task forced to execute and no build cache.
+Run from clean on 0.4.8, with every task forced to execute and no build cache.
 
 | Check | Total | Passed | Failed | Errors | Skipped |
 | --- | --- | --- | --- | --- | --- |
-| Android unit tests | 298 | 297 | 0 | 0 | 1 |
+| Android unit tests | 300 | 299 | 0 | 0 | 1 |
 | Dashboard tests | 91 | 91 | 0 | 0 | 0 |
 
 - Debug and release builds: successful.
@@ -66,14 +68,20 @@ This is emulator evidence. **D42 stays NOT TESTED** for a physical Android 14 or
 
 ## Force-stop
 
-| Finding | Result |
-| --- | --- |
-| Simulation does not restart by itself | PASS |
-| Test providers removed without reopening the app | **FAIL, a known limitation** |
-| Reopening RouteMock removes them | PASS |
+| Finding | Phone, Android 13 (historical) | Emulator, Android 14 |
+| --- | --- | --- |
+| Simulation does not restart by itself | PASS | PASS |
+| Test providers removed without reopening the app | **FAIL, a known limitation** | **FAIL, the same limitation** |
+| No fresh mock fixes after force-stop | Seen | PASS |
+| Reopening RouteMock removes them | PASS | PASS, about 1.1 s after launch |
+| Playback stays stopped after reopening | | PASS |
 
-Stale mock data stays available as last known location until then. See
-[FORCE_STOP_RECOVERY.md](FORCE_STOP_RECOVERY.md).
+Until RouteMock is reopened, a stale mock fix stays available as last known location. On the
+emulator it still showed a moving speed, and another app read it. Android also removes the
+notification, so nothing shows the providers remain. Cleanup at force-stop is outside the app's
+control, so 0.4.8 improves recovery instead: it opens on the Simulation tab with a notice that
+explains what happened and that the providers were removed. Normal Stop removes the providers at
+once. See [FORCE_STOP_RECOVERY.md](FORCE_STOP_RECOVERY.md).
 
 ## Bugs found by device testing and fixed
 

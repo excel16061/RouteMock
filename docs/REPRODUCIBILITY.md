@@ -84,6 +84,10 @@ ANDROID_SDK_ROOT="$HOME/RouteMock-android-sdk" ANDROID_AVD_HOME="$HOME/RouteMock
 
 Emulator results are evidence about the emulator, not about a phone.
 
+Shut the emulator down with `adb -s emulator-5554 shell reboot -p`, not `adb emu kill`. After an
+`emu kill`, the mock-app selection and a deleted file came back on the next boot, because Android had
+not yet written them to disk.
+
 ## Device tests
 
 Install with `adb install -r`, and select RouteMock as the mock location app. Do not touch the

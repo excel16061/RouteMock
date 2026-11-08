@@ -124,7 +124,8 @@
     <string name="end_cleanup_incomplete">Android refused to remove one or more test providers, so apps may not get real locations. Select RouteMock as the mock location app again and reopen RouteMock, or restart the phone.</string>
     <string name="end_not_authorized">RouteMock is not authorized to provide mock locations</string>
     <string name="end_failed">Mock location stopped because of an error: %1$s</string>
-    <string name="end_interrupted">The previous simulation was interrupted and was not restarted</string>
+    <string name="end_interrupted">The previous simulation ended without Stop and was not restarted</string>
+    <string name="end_interrupted_cleaned">This happens after a force-stop or a crash. Android does not let an app clean up then, so the test providers stayed registered until RouteMock opened just now. They have been removed. Apps may keep showing the last simulated position until the device gets a new real fix.</string>
 
     <string name="route_name">Route name</string>
     <string name="save_route_title">Save route</string>
