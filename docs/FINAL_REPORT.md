@@ -10,13 +10,13 @@ and on the phone it was used only for the force-stop recovery check. The check-b
 
 | Kind | What it shows | PASS | FAIL | NOT TESTED | Skipped |
 | --- | --- | --- | --- | --- | --- |
-| Physical-device checks | Behavior on one real phone | 38 | 1 | 4 | |
+| Physical-device checks | Behavior on one real phone | 39 | 1 | 3 | |
 | Automated tests | Logic on a computer, with no phone | 390 | 0 | | 1 |
 | Static APK inspection | What is inside the built file | 6 | 0 | | |
 | Live-provider checks | Responses from the real routing service | 6 | 0 | | |
 | Emulator checks | Android 14 emulator, not a phone | 16 | 1 | | |
 
-- **Device checks:** 3 PASS and the 1 FAIL on 0.4.8, from the force-stop recovery check; 10 PASS on
+- **Device checks:** 4 PASS and the 1 FAIL on 0.4.8, from the force-stop recovery and restart checks; 10 PASS on
   0.4.7; the other 25 PASS historical, from 0.4.0 to 0.4.5.
 - **The 1 FAIL** is a known limitation: after a force-stop, test providers stay registered until
   RouteMock is reopened.
@@ -75,6 +75,7 @@ This is emulator evidence. **D42 stays NOT TESTED** for a physical Android 14 or
 | No fresh mock fixes after force-stop | Seen | PASS |
 | Reopening RouteMock removes them | PASS; on 0.4.8 about 0.7 s after launch, with the notice | PASS, about 1.1 s after launch |
 | Playback stays stopped after reopening | Seen on 0.4.8 | PASS |
+| A phone restart removes them, without opening RouteMock | PASS on 0.4.8 | Not tested |
 
 Until RouteMock is reopened, a stale mock fix stays available as last known location. On the
 emulator it still showed a moving speed, and another app read it. Android also removes the

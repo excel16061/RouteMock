@@ -53,7 +53,7 @@ network and was run separately on 0.4.6.
 
 | Kind | PASS | FAIL | NOT TESTED | Other |
 | --- | --- | --- | --- | --- |
-| Physical-device checks | 38 | 1 | 4 | 3 PASS and the FAIL on 0.4.8; 10 PASS on 0.4.7; 25 PASS historical |
+| Physical-device checks | 39 | 1 | 3 | 4 PASS and the FAIL on 0.4.8; 10 PASS on 0.4.7; 25 PASS historical |
 | Automated unit and backend tests | 390 | 0 | 0 | 1 skipped |
 | Static APK inspection | 6 | 0 | 0 | |
 | Live-provider checks | 6 | 0 | 0 | 2 on 0.4.7, 4 historical |
@@ -117,8 +117,7 @@ worst distance from the road 0.055 m, and speed error +0.000%.
 
 1. Low-memory process death
 2. Release APK at runtime
-3. A phone restart clearing abandoned test providers
-4. Android 14 or later on a physical phone. An Android 14 (API 34) emulator passed its compatibility
+3. Android 14 or later on a physical phone. An Android 14 (API 34) emulator passed its compatibility
    checks, recorded separately as emulator evidence
 
 **Force-stop, as separate findings:**
@@ -128,6 +127,8 @@ worst distance from the road 0.055 m, and speed error +0.000%.
   RouteMock is reopened, and a stale mock position stays available as last known location.
 - Reopening RouteMock removes them: PASS. Repeated on the phone on 0.4.8: 3 providers before
   relaunch, 0 about 0.7 s after it, the recovery notice shown, and playback not resumed.
+- A phone restart removes them, without opening RouteMock: PASS on 0.4.8 (D40), tested once. 3
+  providers and a stale mock fix before the restart; 0 providers and no mock fix after boot.
 - On an Android 14 emulator, the same three results, plus no fresh mock fixes after force-stop and
   playback staying stopped after reopening. Emulator evidence only. Normal Stop removed the providers
   at once. 0.4.8 now opens on the recovery notice. See [FORCE_STOP_RECOVERY.md](../FORCE_STOP_RECOVERY.md).

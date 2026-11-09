@@ -12,6 +12,7 @@ Force-stop is several separate findings, and one of them is a FAIL:
 | Reopening RouteMock removes them | PASS on 0.4.5 and 0.4.8 (D18) | PASS on 0.4.7 and 0.4.8 (E13) |
 | Reopening shows the recovery notice | PASS on 0.4.8 (D43) | PASS on 0.4.8 (E16) |
 | Playback stays stopped after reopening | Seen on 0.4.8 | PASS (E14) |
+| A phone restart removes them, without opening RouteMock | PASS on 0.4.8 (D40) | Not tested |
 
 Android gives the app no chance to clean up at force-stop, so RouteMock cannot prevent this. What it
 can do is clean up the moment it is opened again, and say so clearly. Since 0.4.8 it opens straight
@@ -55,6 +56,13 @@ Reopening removed the providers about 0.7 s after the launch command and opened 
 notice. Playback did not resume. See the
 [verification report](samples/verification-report.md#force-stop-recovery-on-the-phone-048) and
 [samples](samples/forcestop-observations-phone-0.4.8.csv).
+
+### Restart, 0.4.8
+
+On the same phone, force-stop again left 3 providers and a mock-flagged last known, 30 s old. After one
+`adb reboot`, readings at 39, 70, and 100 s after boot showed 0 providers, no mock location record, no
+gps last known, and fused and network fixes that were not mock. RouteMock was not opened. See
+[reboot-observations-phone-0.4.8.csv](samples/reboot-observations-phone-0.4.8.csv).
 
 ## On the Android 14 emulator
 
@@ -128,7 +136,8 @@ may still be registered.
    simulated position.
 3. **If the notice says Android refused to remove a provider**, select RouteMock as the mock location
    app again and reopen it, or restart the phone.
-4. **If RouteMock cannot be opened**, restart the phone. Test providers are not expected to survive a
-   restart, but **this was not tested**.
+4. **If RouteMock cannot be opened**, restart the phone. On the test phone (Android 13, 0.4.8), one
+   restart removed all 3 left-over providers and the stale mock fix before RouteMock was opened.
+   Tested once, on one phone.
 
 Uninstalling also ends the app, but that was not tested either, and it deletes saved routes.

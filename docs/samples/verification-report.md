@@ -18,13 +18,13 @@ no revision identifier exists.
 
 | Kind | What it shows | PASS | FAIL | NOT TESTED | Other |
 | --- | --- | --- | --- | --- | --- |
-| [Physical-device checks](#physical-device-checks) | Behavior on the one real phone | 38 | 1 | 4 | |
+| [Physical-device checks](#physical-device-checks) | Behavior on the one real phone | 39 | 1 | 3 | |
 | [Automated tests](#automated-tests) | Logic on a computer, with no phone | 390 | 0 | 0 | 1 skipped |
 | [Static APK inspection](#static-apk-inspection) | What is inside the built file | 6 | 0 | 0 | |
 | [Live-provider checks](#live-provider-checks) | Responses from the real routing service | 6 | 0 | 0 | |
 | [Emulator checks](#emulator-evidence-android-14) | Behavior on an Android 14 emulator, not a phone | 16 | 1 | 0 | |
 
-- **Device split:** 3 PASS and the 1 FAIL on 0.4.8, from the force-stop recovery check. 10 PASS on
+- **Device split:** 4 PASS and the 1 FAIL on 0.4.8, from the force-stop recovery and restart checks. 10 PASS on
   0.4.7. The other 25 PASS are historical, from 0.4.0 to 0.4.5.
 - **Live-provider split:** 2 PASS on 0.4.7, and 4 historical.
 - **The 1 FAIL** is the force-stop cleanup limitation in check D17, first seen on 0.4.0 and 0.4.5 and
@@ -297,19 +297,48 @@ counts, mock flags, and fix ages. No other app was installed.
 Samples are in [forcestop-observations-phone-0.4.8.csv](forcestop-observations-phone-0.4.8.csv), with
 no coordinates.
 
+### Phone restart after force-stop (0.4.8)
+
+**Physical-device evidence**, run as a test on 2026-11-08 with one approved restart, on the same phone
+and build (`78612dcb...`). It used the owner's existing consent; the test accepted and withdrew
+nothing, and the receipt and saved routes were byte-identical before and after. Only provider counts,
+mock status, and fix ages were recorded.
+
+The saved synthetic route `RM-test-berlin` was running when RouteMock was force-stopped. **D17 is
+unchanged:** the providers stayed after force-stop. The restart is a separate result, D40.
+
+| Moment | Test providers | Last known: gps | Last known: fused and network |
+| --- | --- | --- | --- |
+| Running | 3 | Mock, 0.4 s old | Mock, 0.4 s old |
+| 3 s after force-stop | 3 | Mock, 3.3 s old | Mock, 3.3 s old |
+| 30 s after force-stop, just before `adb reboot` | 3 | Mock, 30.4 s old | Mock, 30.4 s old |
+| 39 s after boot, RouteMock not opened | **0** | None | Not mock, 8.0 s old |
+| 70 s after boot | 0 | None | Not mock |
+| 100 s after boot | 0 | None | Not mock |
+
+- **The restart removed the providers and the stale mock fix.** Android kept no mock location record,
+  and no provider history carried over.
+- **RouteMock was not opened** after the restart, and its process was not running, so the cleanup
+  was Android's, not the app's. The app's interruption record was left in place, so RouteMock is
+  expected to show its recovery notice when next opened; that was not checked.
+- The phone was locked after boot. Readings were taken through `adb` only.
+
+Samples are in [reboot-observations-phone-0.4.8.csv](reboot-observations-phone-0.4.8.csv).
+
 ## Physical-device checks
 
 "Current" means run on 0.4.7. "Historical" means the result is from the build shown and was not
 repeated on 0.4.7. Since 0.4.5, the app has changed only in its backup rules and its handling of
 malformed dashboard replies, and in 0.4.8 its force-stop recovery notice.
 
-### Current build, 0.4.8 (3 PASS, 1 FAIL)
+### Current build, 0.4.8 (4 PASS, 1 FAIL)
 
 | # | Check | Build | Result | Evidence |
 | --- | --- | --- | --- | --- |
 | D16 | Force-stop: simulation does not restart | 0.4.0, 0.4.5, **0.4.8** | PASS | No process, service, notification, or wake lock for the 90 s watched, on every build |
 | D17 | **Force-stop: test providers removed immediately, without reopening the app** | 0.4.0, 0.4.5, **0.4.8** | **FAIL (known limitation)** | 0.4.0 and 0.4.5: 3 providers stayed for the 90 s observed, with no new fixes, and last known stayed a stale mock fix. 0.4.8: the same, 3 providers and last known mock-flagged for 90 s. See [recovery notes](../FORCE_STOP_RECOVERY.md) |
 | D18 | Force-stop: reopening RouteMock removes the providers | 0.4.5, **0.4.8** | PASS | 0 providers after relaunch; last known no longer mock. On 0.4.8, removed about 0.7 s after the launch command |
+| D40 | Phone restart removes abandoned test providers | **0.4.8** | PASS | After force-stop left 3 providers and a stale mock fix, one restart left 0 providers, no mock record, and no mock-flagged last known, before RouteMock was opened. See above |
 | D43 | Force-stop: reopening shows the recovery notice | **0.4.8** | PASS | Opened straight on Simulation with "The previous simulation ended without Stop and was not restarted" and the explanation that the providers were removed |
 
 ### Previous build, 0.4.7 (10 PASS)
@@ -357,13 +386,12 @@ malformed dashboard replies, and in 0.4.8 its force-stop recovery notice.
 | D34 | Offline required withdrawal | 0.4.5 | PASS | Session stopped at once; server updated 5.0 s after reconnecting |
 | D35 | Offline Withdraw all, delivered on relaunch | 0.4.5 | PASS | Server unchanged while the app stayed closed; revoked 4.3 s after launch |
 
-### NOT TESTED (4)
+### NOT TESTED (3)
 
 | # | Check | Why |
 | --- | --- | --- |
 | D37 | Low-memory process death | `adb` could not cause it: `kill` was denied, and `am kill` leaves foreground services alone |
 | D39 | Release APK at runtime | Its signature differs from the debug build, so installing it needs an uninstall, which was ruled out |
-| D40 | Phone restart clearing abandoned test providers | No restart was performed |
 | D42 | Android 14 or later | Only Android 13 is available on a physical phone. An Android 14 emulator passed separately, which does not count here |
 
 ## Automated tests

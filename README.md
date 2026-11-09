@@ -491,7 +491,7 @@ nothing shows that the test providers are still registered. **If the notificatio
 without you pressing Stop, open RouteMock.** A journal on disk records that providers may
 exist, so RouteMock removes them as it starts and opens on a notice saying so. Until you
 reopen it, apps can still read the last simulated position, frozen. If RouteMock cannot be
-opened, restart the phone (not tested).
+opened, restart the phone: on the test phone one restart removed the left-over providers.
 
 ## Limitations
 
@@ -551,7 +551,7 @@ Evidence is kept in five separate kinds, which are not added together. The
 
 | Kind | PASS | FAIL | NOT TESTED | Notes |
 | --- | --- | --- | --- | --- |
-| Physical-device checks | 38 | 1 | 4 | One REVVL 6 Pro on Android 13. 3 PASS and the FAIL on 0.4.8, 10 PASS on 0.4.7; the rest are from 0.4.0 to 0.4.5 |
+| Physical-device checks | 39 | 1 | 3 | One REVVL 6 Pro on Android 13. 4 PASS and the FAIL on 0.4.8, 10 PASS on 0.4.7; the rest are from 0.4.0 to 0.4.5 |
 | Automated tests | 390 | 0 | | 299 Android and 91 dashboard, on 0.4.8; 1 opt-in network test skipped |
 | Static APK inspection | 6 | 0 | | Release APK read without running it |
 | Live-provider checks | 6 | 0 | | Public Valhalla server. 2 on 0.4.7; 4 historical |
@@ -601,7 +601,7 @@ session boundary is covered by unit tests, as a phone cannot reach it directly.
 ### Not tested
 
 A real low-memory process death, the
-release APK on a device, a phone restart clearing leftover providers, Android 14 or later on a physical phone (an Android 14 emulator passed separately), device-to-device transfer, and any deployment of the
+release APK on a device, Android 14 or later on a physical phone (an Android 14 emulator passed separately), device-to-device transfer, and any deployment of the
 dashboard.
 
 ### Reproducing the results

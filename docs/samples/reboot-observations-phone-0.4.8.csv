@@ -1,0 +1,9 @@
+sample,reference_event,seconds_after_reference,mock_providers,gps_last_known_mock,gps_last_known_age_s,fused_last_known_mock,fused_last_known_age_s,network_last_known_mock,network_last_known_age_s
+R0_before_start,force-stop,,0,False,0.0,False,1.0,False,13.0
+R1_running,force-stop,,3,True,0.1,True,0.1,True,0.1
+R2_running,force-stop,,3,True,0.4,True,0.4,True,0.4
+R3_after_forcestop,force-stop,2.9,3,True,3.3,True,3.3,True,3.3
+R3_after_forcestop,force-stop,30.0,3,True,30.4,True,30.4,True,30.4
+R4_after_boot,boot (device uptime),39.4,0,none,none,False,8.0,False,8.0
+R4_after_boot,boot (device uptime),69.5,0,none,none,False,38.1,False,38.1
+R4_after_boot,boot (device uptime),99.8,0,none,none,False,68.3,False,68.3
