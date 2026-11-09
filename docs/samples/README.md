@@ -26,6 +26,7 @@ Nothing here records a real journey. Do not read these files as travel.
 | `report-export-emulator-api34/` | The finalized emulator run | Emulator measurements |
 | `forcestop-observations-emulator-api34.csv` | Provider, last-known, process, and observer counts around force-stop, relaunch, and normal Stop. No coordinates | Emulator observation, not a physical device |
 | `report-export-emulator-forcestop/` | The finalized emulator force-stop run | Emulator measurements |
+| `forcestop-observations-phone-0.4.8.csv` | Provider counts, last-known mock flags, and app state around force-stop and relaunch on the phone, 0.4.8. No coordinates | Independently observed on the physical phone |
 
 **Categories used across the project:**
 

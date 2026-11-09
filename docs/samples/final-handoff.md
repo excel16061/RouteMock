@@ -3,7 +3,7 @@
 Current state, on 2026-11-07, after protocols road-arrival-1 and observer-delivery-1. The check-by-check record is the
 [verification report](verification-report.md).
 
-**Status:** RouteMock 0.4.8 is published in source; the phone still runs 0.4.7. 0.4.8 changes only the force-stop recovery notice and has run on the Android 14 emulator only. No consent is in force, and test resources are cleaned up. The dashboard is local only and not deployed.
+**Status:** RouteMock 0.4.8 is published in source and installed on the phone. It changes only the force-stop recovery notice, and on the phone it was used only for the force-stop recovery check. Your own consent acceptance is in force on the phone, unchanged by testing, and test resources are cleaned up. The dashboard is local only and not deployed.
 No license is applied.
 
 ## Repository
@@ -21,9 +21,9 @@ No license is applied.
 | --- | --- |
 | App source | **0.4.8**, versionCode 12 |
 | SDK levels | Compile 36, target 36, minimum 29 |
-| Debug APK SHA-256 | 0.4.8: `78612dcb9c7c218af7808638aa3a1eaae8d89a4a0897a0b35e14fea531301554`, the same file run on the emulator. 0.4.7 on the phone: `e889a053efac0efd41afdd61d7cea99a641770a1b33d486a52f861f2b31adcef` |
+| Debug APK SHA-256 | 0.4.8: `78612dcb9c7c218af7808638aa3a1eaae8d89a4a0897a0b35e14fea531301554`, the same file run on the emulator and installed on the phone. Previously on the phone, 0.4.7: `e889a053efac0efd41afdd61d7cea99a641770a1b33d486a52f861f2b31adcef` |
 | Release APK SHA-256 | 0.4.8: `b77d98358a6e5df4ff03a0069d4376f0143e1824e50375f186c98c6080716ad5`, unsigned, not installed. This hash differs between clean builds of the same source, so release builds are not byte-reproducible here |
-| Installed on the phone | 0.4.7, same hash as the debug APK, installed with `adb install -r` |
+| Installed on the phone | 0.4.8, same hash as the debug APK, installed over 0.4.7 with `adb install -r`; saved data byte-identical |
 | Dashboard | 0.1.1, Django 6.1.3 |
 
 Version 0.4.8 opens on the Simulation tab after a force-stop or crash, with a clearer notice that
@@ -53,7 +53,7 @@ network and was run separately on 0.4.6.
 
 | Kind | PASS | FAIL | NOT TESTED | Other |
 | --- | --- | --- | --- | --- |
-| Physical-device checks | 37 | 1 | 4 | 10 PASS on 0.4.7; 27 PASS and 1 FAIL historical |
+| Physical-device checks | 38 | 1 | 4 | 3 PASS and the FAIL on 0.4.8; 10 PASS on 0.4.7; 25 PASS historical |
 | Automated unit and backend tests | 390 | 0 | 0 | 1 skipped |
 | Static APK inspection | 6 | 0 | 0 | |
 | Live-provider checks | 6 | 0 | 0 | 2 on 0.4.7, 4 historical |
@@ -126,7 +126,8 @@ worst distance from the road 0.055 m, and speed error +0.000%.
 - Simulation does not restart by itself: PASS.
 - Test providers removed without reopening the app: **FAIL, a known limitation.** They stay until
   RouteMock is reopened, and a stale mock position stays available as last known location.
-- Reopening RouteMock removes them: PASS.
+- Reopening RouteMock removes them: PASS. Repeated on the phone on 0.4.8: 3 providers before
+  relaunch, 0 about 0.7 s after it, the recovery notice shown, and playback not resumed.
 - On an Android 14 emulator, the same three results, plus no fresh mock fixes after force-stop and
   playback staying stopped after reopening. Emulator evidence only. Normal Stop removed the providers
   at once. 0.4.8 now opens on the recovery notice. See [FORCE_STOP_RECOVERY.md](../FORCE_STOP_RECOVERY.md).
@@ -203,6 +204,5 @@ See the [publication audit](../PUBLICATION_AUDIT.md) and the
 
 ## Your decisions
 
-- Your own consent acceptance, on the phone.
 - Software, documentation, and sample data licenses: see [LICENSING.md](../LICENSING.md).
 - Legal review of the consent documents.

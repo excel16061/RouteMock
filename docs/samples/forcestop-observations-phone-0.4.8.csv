@@ -1,0 +1,11 @@
+sample,reference_event,seconds_after_reference,mock_providers,gps_last_known_mock,gps_last_known_age_s,fused_last_known_mock,process_running,foreground_service,notifications,wake_lock
+P0_before_start,force-stop,-28.7,0,False,0.3,False,True,0,0,0
+P1_running,force-stop,-16.9,3,True,0.1,True,True,1,2,1
+P2_running,force-stop,-0.9,3,True,0.6,True,True,1,2,1
+P3_after_forcestop,force-stop,3.0,3,True,3.4,True,False,0,0,0
+P3_after_forcestop,force-stop,30.1,3,True,30.6,True,False,0,0,0
+P3_after_forcestop,force-stop,60.1,3,True,60.6,True,False,0,0,0
+P3_after_forcestop,force-stop,90.0,3,True,90.5,True,False,0,0,0
+P4_relaunch,launcher open,6.3,0,False,1.0,False,True,0,0,0
+P5_after_relaunch,launcher open,30.4,0,False,0.2,False,True,0,0,0
+P5_after_relaunch,launcher open,60.5,0,False,0.2,False,True,0,0,0

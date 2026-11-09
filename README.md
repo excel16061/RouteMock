@@ -16,7 +16,7 @@ locations as mock.
 **Evaluation scope:** one physical Android 13 phone, three played road routes, one routing provider,
 and one map tile provider. See [Verification](#verification).
 
-**Status:** version 0.4.8 in source; the test phone runs 0.4.7. Live traffic is **not configured**, and place-name search is not
+**Status:** version 0.4.8, installed on the test phone. Live traffic is **not configured**, and place-name search is not
 implemented. The dashboard has only run locally and **is not ready to deploy**. No license has been
 chosen yet, so all rights are reserved for now, and the consent documents are drafts pending legal
 review.
@@ -551,7 +551,7 @@ Evidence is kept in five separate kinds, which are not added together. The
 
 | Kind | PASS | FAIL | NOT TESTED | Notes |
 | --- | --- | --- | --- | --- |
-| Physical-device checks | 37 | 1 | 4 | One REVVL 6 Pro on Android 13. 10 PASS on 0.4.7; the rest are from 0.4.0 to 0.4.5 |
+| Physical-device checks | 38 | 1 | 4 | One REVVL 6 Pro on Android 13. 3 PASS and the FAIL on 0.4.8, 10 PASS on 0.4.7; the rest are from 0.4.0 to 0.4.5 |
 | Automated tests | 390 | 0 | | 299 Android and 91 dashboard, on 0.4.8; 1 opt-in network test skipped |
 | Static APK inspection | 6 | 0 | | Release APK read without running it |
 | Live-provider checks | 6 | 0 | | Public Valhalla server. 2 on 0.4.7; 4 historical |
@@ -559,8 +559,9 @@ Evidence is kept in five separate kinds, which are not added together. The
 
 **The one FAIL** is a known limitation: after a force-stop, test providers stay registered until
 RouteMock is reopened, and the last known position stays a stale simulated one. The simulation itself
-does not restart. The emulator FAIL is the same limitation reproduced on Android 14, where reopening
-RouteMock removed the providers about 1.1 s after launch. See the
+does not restart. It was seen again on the phone on 0.4.8, where reopening removed the providers
+about 0.7 s after launch and showed the recovery notice. The emulator FAIL is the same limitation on
+Android 14. See the
 [recovery notes](docs/FORCE_STOP_RECOVERY.md).
 
 **Road playback on 0.4.7:** 127 fixes observed through Android's own records, all mock-flagged. The

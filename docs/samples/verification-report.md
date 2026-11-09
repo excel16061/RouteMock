@@ -1,7 +1,8 @@
 # Verification report
 
-**Phone build: RouteMock 0.4.7. Source version: 0.4.8**, which changes only the force-stop recovery
-notice and was run on the Android 14 emulator, not the phone. This is the master record of what was
+**Phone build: RouteMock 0.4.8**, installed over 0.4.7 on 2026-11-08. 0.4.8 changes only the force-stop
+recovery notice. On the phone it was used only for the force-stop recovery check below; the other
+current device results are from 0.4.7. This is the master record of what was
 checked, how, and on which build. Evidence of different kinds is kept apart, and results from earlier
 builds are marked historical.
 
@@ -17,17 +18,18 @@ no revision identifier exists.
 
 | Kind | What it shows | PASS | FAIL | NOT TESTED | Other |
 | --- | --- | --- | --- | --- | --- |
-| [Physical-device checks](#physical-device-checks) | Behavior on the one real phone | 37 | 1 | 4 | |
+| [Physical-device checks](#physical-device-checks) | Behavior on the one real phone | 38 | 1 | 4 | |
 | [Automated tests](#automated-tests) | Logic on a computer, with no phone | 390 | 0 | 0 | 1 skipped |
 | [Static APK inspection](#static-apk-inspection) | What is inside the built file | 6 | 0 | 0 | |
 | [Live-provider checks](#live-provider-checks) | Responses from the real routing service | 6 | 0 | 0 | |
 | [Emulator checks](#emulator-evidence-android-14) | Behavior on an Android 14 emulator, not a phone | 16 | 1 | 0 | |
 
-- **Device split:** 10 PASS on the current 0.4.7 build. The other 27 PASS and the 1 FAIL are historical,
-  from 0.4.0 to 0.4.5, and were not repeated on 0.4.7.
+- **Device split:** 3 PASS and the 1 FAIL on 0.4.8, from the force-stop recovery check. 10 PASS on
+  0.4.7. The other 25 PASS are historical, from 0.4.0 to 0.4.5.
 - **Live-provider split:** 2 PASS on 0.4.7, and 4 historical.
-- **The 1 FAIL** is the force-stop cleanup limitation in check D17. Android gives the app no chance
-  to clean up at that moment, so the app cannot fix it, but the outcome is still not a pass.
+- **The 1 FAIL** is the force-stop cleanup limitation in check D17, first seen on 0.4.0 and 0.4.5 and
+  seen again on 0.4.8. Android gives the app no chance to clean up at that moment, so the app cannot
+  fix it, but the outcome is still not a pass.
 - **The emulator FAIL** is the same limitation reproduced on Android 14 (E11). It is emulator
   evidence and does not replace or add to D17.
 
@@ -256,13 +258,61 @@ mock-app selection and the deletion of the test marker. Both were redone, and th
 clean power-off instead. The sampling took time, so the first reading after force-stop was at 10 s,
 not 3 s; the table gives the real times.
 
+## Force-stop recovery on the phone (0.4.8)
+
+**Physical-device evidence**, run as a test on 2026-11-08 on the REVVL 6 Pro, Android 13. The debug APK
+was SHA-256 `78612dcb9c7c218af7808638aa3a1eaae8d89a4a0897a0b35e14fea531301554`, verified before
+installing and the same file run on the emulator. It was installed over 0.4.7 with `adb install -r`,
+and saved routes and the consent receipt stayed byte-identical.
+
+**Consent:** at the owner's instruction, the run used their existing acceptance, recorded as `USER` before
+this test. No consent was accepted or withdrawn by the test, and no test marker was created, so the
+receipt does not label this run; this report does. The receipt was byte-identical before the install,
+after it, and after the run.
+
+The saved synthetic route `RM-test-berlin` was moving when RouteMock was force-stopped with
+`am force-stop`. Android's location service was read outside the app, recording only provider
+counts, mock flags, and fix ages. No other app was installed.
+
+| Moment | Test providers | Last known on gps and fused | Service and notification |
+| --- | --- | --- | --- |
+| Before Start | 0 | Real fix | None |
+| Running | 3 | Mock, 0.1 to 0.6 s old | Foreground service, notification |
+| 3 s after force-stop | 3 | Mock, 3.4 s old | None |
+| 30 s | 3 | Mock, 30.6 s old | None |
+| 60 s | 3 | Mock, 60.6 s old | None |
+| 90 s | 3 | Mock, 90.5 s old | None |
+| Reopened, 6 s | **0** | Real fix, 1.0 s old | None |
+| 30 s after reopening | 0 | Real fix | None |
+| 60 s after reopening | 0 | Real fix | None |
+
+- **Providers before relaunch:** 3. **After:** 0, removed about 0.7 s after the launch command.
+- **Recovery notice:** RouteMock opened on Simulation with "The previous simulation ended without Stop
+  and was not restarted", saying the providers stayed registered until it opened and have been removed.
+- **Playback did not resume:** no service, notification, wake lock, or provider for the 60 s watched
+  after reopening, and real fixes returned.
+- **Afterwards:** 0 providers, no last mock record, no service, wake lock, or notification. The phone
+  was not restarted.
+
+Samples are in [forcestop-observations-phone-0.4.8.csv](forcestop-observations-phone-0.4.8.csv), with
+no coordinates.
+
 ## Physical-device checks
 
 "Current" means run on 0.4.7. "Historical" means the result is from the build shown and was not
 repeated on 0.4.7. Since 0.4.5, the app has changed only in its backup rules and its handling of
-malformed dashboard replies, and in 0.4.8 its force-stop recovery notice, which is not on the phone.
+malformed dashboard replies, and in 0.4.8 its force-stop recovery notice.
 
-### Current build, 0.4.7 (10 PASS)
+### Current build, 0.4.8 (3 PASS, 1 FAIL)
+
+| # | Check | Build | Result | Evidence |
+| --- | --- | --- | --- | --- |
+| D16 | Force-stop: simulation does not restart | 0.4.0, 0.4.5, **0.4.8** | PASS | No process, service, notification, or wake lock for the 90 s watched, on every build |
+| D17 | **Force-stop: test providers removed immediately, without reopening the app** | 0.4.0, 0.4.5, **0.4.8** | **FAIL (known limitation)** | 0.4.0 and 0.4.5: 3 providers stayed for the 90 s observed, with no new fixes, and last known stayed a stale mock fix. 0.4.8: the same, 3 providers and last known mock-flagged for 90 s. See [recovery notes](../FORCE_STOP_RECOVERY.md) |
+| D18 | Force-stop: reopening RouteMock removes the providers | 0.4.5, **0.4.8** | PASS | 0 providers after relaunch; last known no longer mock. On 0.4.8, removed about 0.7 s after the launch command |
+| D43 | Force-stop: reopening shows the recovery notice | **0.4.8** | PASS | Opened straight on Simulation with "The previous simulation ended without Stop and was not restarted" and the explanation that the providers were removed |
+
+### Previous build, 0.4.7 (10 PASS)
 
 | # | Check | Build | Result | Evidence |
 | --- | --- | --- | --- | --- |
@@ -277,7 +327,7 @@ malformed dashboard replies, and in 0.4.8 its force-stop recovery notice, which 
 | D36 | Delivery to another app | 0.4.7 | PASS | Protocol observer-delivery-1: one separate test app, `LocationManager`, GPS provider. See above |
 | D41 | Reaching the end of a road route | 0.4.7 | PASS | Protocol road-arrival-1, on the 1.32 km route at 30 km/h. See above. The 31.21 km route has not been driven to its end |
 
-### Historical (27 PASS, 1 FAIL)
+### Historical (25 PASS)
 
 | # | Check | Build | Result | Evidence |
 | --- | --- | --- | --- | --- |
@@ -289,9 +339,6 @@ malformed dashboard replies, and in 0.4.8 its force-stop recovery notice, which 
 | D13 | Draft changes leave the session alone | 0.4.0 | PASS | 290 fixes within 0.063 m of the original road |
 | D14 | Offline handling | 0.4.0 | PASS | Real Wi-Fi outage; banner and specific error |
 | D15 | Invalid road route cannot start | 0.4.0 | PASS | Start and Preview refused |
-| D16 | Force-stop: simulation does not restart | 0.4.0, 0.4.5 | PASS | No process or service returned within 90 s |
-| D17 | **Force-stop: test providers removed without reopening the app** | 0.4.0, 0.4.5 | **FAIL (known limitation)** | 3 providers stayed for the 90 s observed. No new fixes, but last known stayed a stale mock fix. See [recovery notes](../FORCE_STOP_RECOVERY.md) |
-| D18 | Force-stop: reopening RouteMock removes the providers | 0.4.5 | PASS | 0 providers after relaunch; last known no longer mock |
 | D19 | Abnormal end via `am crash` | 0.4.0 | PASS | No restart. A crash, not a low-memory kill |
 | D20 | Real marker never takes mock fixes | 0.4.0 | PASS | "Last real location", frozen at the earlier fix |
 | D21 | Service unreachable from outside | 0.4.1 | PASS | `adb` refused: "Requires permission not exported" |

@@ -1,8 +1,8 @@
 # Final report
 
 Milestone state: RouteMock 0.4.8 in source and dashboard 0.1.1. The dashboard is not deployed, and no
-license is selected. 0.4.7 is installed on the phone. 0.4.8 changes only the force-stop recovery
-notice and has run on the Android 14 emulator only. The check-by-check record is the
+license is selected. 0.4.8 is installed on the phone. It changes only the force-stop recovery notice,
+and on the phone it was used only for the force-stop recovery check. The check-by-check record is the
 [verification report](samples/verification-report.md), and current status is in the
 [handoff](samples/final-handoff.md).
 
@@ -10,14 +10,14 @@ notice and has run on the Android 14 emulator only. The check-by-check record is
 
 | Kind | What it shows | PASS | FAIL | NOT TESTED | Skipped |
 | --- | --- | --- | --- | --- | --- |
-| Physical-device checks | Behavior on one real phone | 37 | 1 | 4 | |
+| Physical-device checks | Behavior on one real phone | 38 | 1 | 4 | |
 | Automated tests | Logic on a computer, with no phone | 390 | 0 | | 1 |
 | Static APK inspection | What is inside the built file | 6 | 0 | | |
 | Live-provider checks | Responses from the real routing service | 6 | 0 | | |
 | Emulator checks | Android 14 emulator, not a phone | 16 | 1 | | |
 
-- **Device checks:** 10 PASS are current, on 0.4.7. The other 27 PASS and the 1 FAIL are historical,
-  from 0.4.0 to 0.4.5.
+- **Device checks:** 3 PASS and the 1 FAIL on 0.4.8, from the force-stop recovery check; 10 PASS on
+  0.4.7; the other 25 PASS historical, from 0.4.0 to 0.4.5.
 - **The 1 FAIL** is a known limitation: after a force-stop, test providers stay registered until
   RouteMock is reopened.
 - **The emulator FAIL** is the same limitation, reproduced on Android 14. It is emulator evidence.
@@ -68,13 +68,13 @@ This is emulator evidence. **D42 stays NOT TESTED** for a physical Android 14 or
 
 ## Force-stop
 
-| Finding | Phone, Android 13 (historical) | Emulator, Android 14 |
+| Finding | Phone, Android 13 (0.4.0, 0.4.5, 0.4.8) | Emulator, Android 14 |
 | --- | --- | --- |
 | Simulation does not restart by itself | PASS | PASS |
 | Test providers removed without reopening the app | **FAIL, a known limitation** | **FAIL, the same limitation** |
 | No fresh mock fixes after force-stop | Seen | PASS |
-| Reopening RouteMock removes them | PASS | PASS, about 1.1 s after launch |
-| Playback stays stopped after reopening | | PASS |
+| Reopening RouteMock removes them | PASS; on 0.4.8 about 0.7 s after launch, with the notice | PASS, about 1.1 s after launch |
+| Playback stays stopped after reopening | Seen on 0.4.8 | PASS |
 
 Until RouteMock is reopened, a stale mock fix stays available as last known location. On the
 emulator it still showed a moving speed, and another app read it. Android also removes the
@@ -112,4 +112,3 @@ once. See [FORCE_STOP_RECOVERY.md](FORCE_STOP_RECOVERY.md).
 
 - Software, documentation, and data licenses: [LICENSING.md](LICENSING.md).
 - Legal review of the consent documents: [legal/README.md](legal/README.md).
-- Your own consent acceptance on the phone.
